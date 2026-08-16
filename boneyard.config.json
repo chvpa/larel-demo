@@ -1,0 +1,15 @@
+{
+  "routes": [
+    "/",
+    "/productos",
+    "/p/zap-pegasus",
+    "/cuenta/pedidos",
+    "/cuenta/deseos",
+    "/admin",
+    "/admin/clientes",
+    "/admin/stock",
+    "/admin/promos"
+  ],
+  "breakpoints": [390, 768, 1280],
+  "wait": 2500
+}
