@@ -9,6 +9,11 @@ const HEX: Record<string, string> = {
   amarillo: '#facc15',
   rosa: '#f9a8d4',
   crema: '#ede4d3',
+  rosado: '#f9a8d4',
+  celeste: '#7dd3fc',
+  marron: '#7c4a21',
+  beige: '#e7d8bf',
+  negra: '#161616',
 }
 
 /** Returns a CSS background for a color name, supporting "Rojo/Negro" duotones. */

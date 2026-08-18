@@ -63,10 +63,10 @@ export function Header() {
                 </NavLink>
               ))}
             <NavLink
-              to="/productos?tag=oferta"
+              to="/productos"
               className={`label text-[13px] transition-colors duration-500 ${transparent ? 'text-larel' : 'text-larel-dark'}`}
             >
-              Outlet
+              Ver todo
             </NavLink>
           </nav>
 

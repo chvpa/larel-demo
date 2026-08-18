@@ -10,7 +10,7 @@ type WishlistState = {
 export const useWishlist = create<WishlistState>()(
   persist(
     (set, get) => ({
-      ids: ['zap-jordan', 'buzo-oversize'],
+      ids: ['fb1802400', 'jv9902'],
       toggle: (id) =>
         set((st) => ({ ids: st.ids.includes(id) ? st.ids.filter((x) => x !== id) : [...st.ids, id] })),
       has: (id) => get().ids.includes(id),

@@ -19,8 +19,7 @@ export function ProductCard({ product }: { product: Product }) {
   const [size, setSize] = useState<string | null>(null)
   const [askSize, setAskSize] = useState(false)
 
-  const isNew = product.tags.includes('new')
-  const isBestseller = product.tags.includes('bestseller')
+  const lastUnits = product.stock <= 2
   const oneSize = product.sizes.length === 1
 
   const addToCart = () => {
@@ -36,19 +35,15 @@ export function ProductCard({ product }: { product: Product }) {
 
   return (
     <div className="flex h-full flex-col">
-      <Link to={`/p/${product.id}`} className="group relative block overflow-hidden rounded-2xl bg-zinc-100">
+      <Link to={`/p/${product.id}`} className="group relative block overflow-hidden rounded-2xl bg-white ring-1 ring-zinc-100">
         <Img
           src={product.images[color % product.images.length]}
           alt={product.name}
-          className="aspect-[4/5] w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="aspect-[4/5] w-full bg-white object-contain transition-transform duration-300 group-hover:scale-105"
         />
         <div className="absolute left-2 top-2 flex flex-col items-start gap-1">
-          {product.compareAt && (
-            <span className="rounded-full bg-larel px-2 py-0.5 text-[11px] font-bold text-ink">Oferta</span>
-          )}
-          {isNew && <span className="rounded-full bg-ink px-2 py-0.5 text-[11px] font-bold text-larel">Nuevo</span>}
-          {isBestseller && !isNew && !product.compareAt && (
-            <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-bold text-ink shadow-sm">Top ventas</span>
+          {lastUnits && (
+            <span className="rounded-full bg-larel px-2 py-0.5 text-[11px] font-bold text-ink">Últimas unidades</span>
           )}
         </div>
         <button
@@ -69,7 +64,7 @@ export function ProductCard({ product }: { product: Product }) {
           {product.name}
         </Link>
         <div className="mt-0.5">
-          <Price price={product.price} compareAt={product.compareAt} size="sm" />
+          <Price price={product.price} size="sm" />
         </div>
 
         {/* colors */}

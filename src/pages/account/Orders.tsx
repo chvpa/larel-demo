@@ -51,7 +51,7 @@ function OrderCard({ order }: { order: Order }) {
         {order.items.map((it, i) => (
           <li key={i} className="flex items-center gap-3">
             <Link to={`/p/${it.productId}`}>
-              <Img src={it.image} alt={it.name} className="size-12 rounded-xl object-cover" />
+              <Img src={it.image} alt={it.name} className="size-12 rounded-xl bg-white object-contain" />
             </Link>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold">{it.name}</p>

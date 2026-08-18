@@ -87,7 +87,7 @@ export function SearchOverlay() {
                   onClick={() => setOpen(false)}
                   className="flex items-center gap-3 py-3"
                 >
-                  <Img src={p.images[0]} alt={p.name} className="size-14 rounded-xl object-cover" />
+                  <Img src={p.images[0]} alt={p.name} className="size-14 rounded-xl bg-white object-contain" />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold">{p.name}</p>
                     <p className="text-xs text-zinc-500">{p.brand}</p>

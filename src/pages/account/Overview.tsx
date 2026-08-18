@@ -40,7 +40,7 @@ export function Overview() {
             <ChevronRight size={16} className="text-larel" />
           </div>
           <div className="mt-2 flex items-center gap-3">
-            <Img src={active.items[0].image} alt="" className="size-14 rounded-xl object-cover" />
+            <Img src={active.items[0].image} alt="" className="size-14 rounded-xl bg-white object-contain" />
             <div className="flex-1">
               <p className="font-bold">{active.id}</p>
               <p className="text-xs text-white/60">
@@ -83,7 +83,7 @@ export function Overview() {
               if (!p) return null
               return (
                 <Link key={id} to={`/p/${id}`} className="w-32 shrink-0">
-                  <Img src={p.images[0]} alt={p.name} className="aspect-square w-full rounded-xl object-cover" />
+                  <Img src={p.images[0]} alt={p.name} className="aspect-square w-full rounded-xl bg-white object-contain" />
                   <p className="mt-1 truncate text-xs font-semibold">{p.name}</p>
                   <p className="text-xs font-bold">{gs(p.price)}</p>
                 </Link>

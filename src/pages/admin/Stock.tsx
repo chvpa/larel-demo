@@ -7,7 +7,7 @@ import { useFakeLoad } from '../../lib/useFakeLoad'
 import { gs } from '../../lib/format'
 import { Img } from '../../components/Img'
 
-const LOW = 15
+const LOW = 3 // el stock real del CSV va de 1 a 15 unidades por SKU
 
 export function Stock() {
   const [q, setQ] = useState('')
@@ -55,7 +55,7 @@ export function Stock() {
             const qty = stock[p.id] ?? p.stock
             return (
               <li key={p.id} className="flex items-center gap-3 rounded-2xl bg-white p-3 shadow-sm">
-                <Img src={p.images[0]} alt={p.name} className="size-14 shrink-0 rounded-xl object-cover" />
+                <Img src={p.images[0]} alt={p.name} className="size-14 shrink-0 rounded-xl bg-white object-contain" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-bold">{p.name}</p>
                   <p className="text-xs text-zinc-500">

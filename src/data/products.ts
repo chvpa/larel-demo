@@ -1,125 +1,91 @@
-export type Category = 'futbol' | 'running' | 'fitness' | 'lifestyle' | 'accesorios'
+export type Category = 'calzados' | 'prendas' | 'accesorios'
 
+/** Un producto = un SKU del stock. Los talles son las filas del CSV agrupadas. */
 export type Product = {
   id: string
+  sku: string
+  /** Código interno, correlativo: sirve para ordenar por ingreso. */
+  code: number
   name: string
   brand: string
   category: Category
-  type: 'calzado' | 'prenda' | 'accesorio'
+  /** Categoría fina del stock: "Calzado deportivo", "Bolsos y mochilas", … */
+  subcategory: string
+  gender?: string
   price: number
-  compareAt?: number
   images: string[]
   sizes: string[]
   colors: string[]
   stock: number
-  rating: number
-  reviews: number
-  tags: Array<'new' | 'oferta' | 'bestseller'>
   description: string
 }
 
 const u = (id: string, w = 900) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=70`
 
-// image pool
-const img = {
-  shoeRed: u('photo-1542291026-7eec264c27ff'),
-  shoeWhiteNike: u('photo-1595950653106-6c9ebd614d3a'),
-  shoeJump: u('photo-1600185365483-26d7a4cc7519'),
-  shoeVans: u('photo-1606107557195-0e29a4b5b4aa'),
-  shoeAdidasWhite: u('photo-1605348532760-6753d2c43329'),
-  shoeBlackNike: u('photo-1600269452121-4f2416e55c28'),
-  shoeYellow: u('photo-1560769629-975ec94e6a86'),
-  shoePairOrange: u('photo-1491553895911-0055eca6402d'),
-  shoeBlackSole: u('photo-1512374382149-233c42b6a83b'),
+/** Fotos editoriales (no son productos): hero, portadas de categoría y bento. */
+export const IMG = {
   shoeWall: u('photo-1543508282-6319a3e2621f'),
-  shoeTraining: u('photo-1539185441755-769473a23570'),
-  shoeJordan: u('photo-1556906781-9a412961c28c'),
-  shoeNmd: u('photo-1579338559194-a162d19bf842'),
-  shoeWalk: u('photo-1552346154-21d32810aba3'),
-  shoeTrail: u('photo-1465479423260-c4afc24172c6'),
-  shoeBox: u('photo-1595341888016-a392ef81b7de'),
-  teeWhite: u('photo-1521572163474-6864f9cf17ab'),
-  hoodie: u('photo-1556821840-3a63f95609a7'),
-  teeHanger: u('photo-1618354691373-d851c5c3a990'),
-  leggings: u('photo-1571945153237-4929e783af4a'),
-  yoga: u('photo-1506629082955-511b1aa562c8'),
-  gymGirl: u('photo-1517836357463-d25dfeac3438'),
-  gymMan: u('photo-1534438327276-14e5300c3a48'),
-  training: u('photo-1571902943202-507ec2618e8f'),
-  runSunset: u('photo-1552674605-db6ffd4facb5'),
-  track: u('photo-1526232761682-d26e03ac148e'),
-  trackStart: u('photo-1461896836934-ffe607ba8211'),
-  bootsGrass: u('photo-1517466787929-bc90951d0974'),
-  soccerPlay: u('photo-1551958219-acbc608c6377'),
-  stadium: u('photo-1522778119026-d647f0596c20'),
-  bootsClose: u('photo-1574629810360-7efbbe195018'),
-  soccerSunset: u('photo-1551958219-acbc608c6377'),
-  backpack: u('photo-1553062407-98eeb64c6a62'),
-  backpackYellow: u('photo-1556306535-0f09a537f0a3'),
-  cap: u('photo-1521369909029-2afed882baee'),
-  bottle: u('photo-1575428652377-a2d80e2277fc'),
-  bottleBlack: u('photo-1602143407151-7111542de6e8'),
-  ball: u('photo-1622260614153-03223fb72052'),
-  hoop: u('photo-1519861531473-9200262188bf'),
-  gym: u('photo-1511886929837-354d827aae26'),
 }
 
-export const IMG = img
-
-const SHOE_SIZES = ['37', '38', '39', '40', '41', '42', '43', '44']
-const CLOTH_SIZES = ['S', 'M', 'L', 'XL', 'XXL']
-const ONE_SIZE = ['Único']
-
-const D =
-  'Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa.'
-
+/** Generado desde demo-productos/stock-demo.csv — no editar a mano. */
 export const products: Product[] = [
-  // ── FÚTBOL ──────────────────────────────────────────
-  { id: 'bot-predator', name: 'Botín Predator League FG', brand: 'Adidas', category: 'futbol', type: 'calzado', price: 620000, compareAt: 780000, images: [img.bootsClose, img.bootsGrass], sizes: SHOE_SIZES, colors: ['Negro', 'Blanco'], stock: 24, rating: 4.8, reviews: 132, tags: ['bestseller', 'oferta'], description: `Botín de fútbol para césped natural, control total del balón. ${D}` },
-  { id: 'bot-phantom', name: 'Botín Phantom GX Academy', brand: 'Nike', category: 'futbol', type: 'calzado', price: 690000, images: [img.bootsGrass, img.soccerPlay], sizes: SHOE_SIZES, colors: ['Verde', 'Negro'], stock: 18, rating: 4.7, reviews: 89, tags: ['new'], description: `Precisión en cada pase con la zona de golpeo texturizada. ${D}` },
-  { id: 'bot-future', name: 'Botín Future Match TT', brand: 'Puma', category: 'futbol', type: 'calzado', price: 450000, compareAt: 560000, images: [img.soccerSunset, img.bootsClose], sizes: SHOE_SIZES, colors: ['Azul', 'Naranja'], stock: 31, rating: 4.5, reviews: 54, tags: ['oferta'], description: `Para canchas sintéticas, ajuste adaptativo FUZIONFIT. ${D}` },
-  { id: 'cam-albirroja', name: 'Camiseta Albirroja 2026', brand: 'Puma', category: 'futbol', type: 'prenda', price: 520000, images: [img.teeHanger, img.soccerPlay], sizes: CLOTH_SIZES, colors: ['Blanco/Rojo'], stock: 60, rating: 4.9, reviews: 210, tags: ['new', 'bestseller'], description: `Camiseta oficial de la selección paraguaya, tecnología dryCELL. ${D}` },
-  { id: 'short-futbol', name: 'Short de Fútbol Tiro 24', brand: 'Adidas', category: 'futbol', type: 'prenda', price: 180000, images: [img.soccerPlay, img.teeWhite], sizes: CLOTH_SIZES, colors: ['Negro', 'Azul'], stock: 45, rating: 4.4, reviews: 38, tags: [], description: `Short liviano AEROREADY para entrenamientos y partidos. ${D}` },
-  { id: 'pelota-alrider', name: 'Pelota Al Rihla Pro', brand: 'Adidas', category: 'futbol', type: 'accesorio', price: 260000, compareAt: 320000, images: [img.ball, img.stadium], sizes: ONE_SIZE, colors: ['Blanco'], stock: 40, rating: 4.6, reviews: 67, tags: ['oferta'], description: `Pelota profesional N°5, costura termosellada. ${D}` },
-  { id: 'canilleras', name: 'Canilleras Mercurial Lite', brand: 'Nike', category: 'futbol', type: 'accesorio', price: 95000, images: [img.bootsGrass, img.ball], sizes: ['S', 'M', 'L'], colors: ['Negro'], stock: 80, rating: 4.3, reviews: 25, tags: [], description: `Protección liviana con carcasa moldeada. ${D}` },
-  { id: 'medias-futbol', name: 'Medias de Fútbol Team', brand: 'Umbro', category: 'futbol', type: 'accesorio', price: 55000, images: [img.soccerPlay, img.bootsClose], sizes: ['37-40', '41-44'], colors: ['Blanco', 'Negro', 'Rojo'], stock: 120, rating: 4.2, reviews: 19, tags: [], description: `Medias largas con soporte de arco y talón reforzado. ${D}` },
+  // <catalogo>
+  // ── CALZADOS ──────────────────────────────────────────
+  { id: "iq2390900", sku: "IQ2390900", code: 21512, name: "Nike Phantom 6 High Acad Fg Blanco/Rosa", brand: "Nike", category: "calzados", subcategory: "Calzado deportivo", gender: "Hombre", price: 700000, images: ["/productos/IQ2390900-1.webp","/productos/IQ2390900-2.webp"], sizes: ["8","9","9.5","10","10.5"], colors: ["Blanco"], stock: 7, description: "Calzado Deportivo Nike para hombre en color blanco. Talles disponibles: 8, 9, 9.5, 10, 10.5. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "jq8645", sku: "JQ8645", code: 21459, name: "Adidas Galaxy Star 2.0 U Negro/Blanco", brand: "Adidas", category: "calzados", subcategory: "Calzado deportivo", gender: "Hombre", price: 550000, images: ["/productos/JQ8645-1.webp","/productos/JQ8645-2.webp"], sizes: ["9.5","11"], colors: ["Negro"], stock: 2, description: "Calzado Deportivo Adidas para hombre en color negro. Talles disponibles: 9.5, 11. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "m8801zt", sku: "M8801ZT", code: 20526, name: "New Balance 880 Gris/Verde", brand: "New Balance", category: "calzados", subcategory: "Calzado deportivo", gender: "Hombre", price: 970000, images: ["/productos/M8801ZT-1.webp","/productos/M8801ZT-2.webp"], sizes: ["7","7.5","8","8.5","9","9.5","10","10.5","11.5","12"], colors: ["Gris"], stock: 15, description: "Calzado Deportivo New Balance para hombre en color gris. Talles disponibles: 7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11.5, 12. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "c2099644ns", sku: "C2099644NS", code: 18537, name: "Crocs Inmotion Celeste Blanco", brand: "Crocs", category: "calzados", subcategory: "Ojotas y sandalias", gender: "Mujer", price: 420000, images: ["/productos/C2099644NS-1.webp","/productos/C2099644NS-2.webp"], sizes: ["4","8","12","13"], colors: ["Celeste"], stock: 4, description: "Ojotas Y Sandalias Crocs para mujer en color celeste. Talles disponibles: 4, 8, 12, 13. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "3028512428", sku: "3028512428", code: 16602, name: "Under Ua Lockdown Blanco/Celeste", brand: "Under Armour", category: "calzados", subcategory: "Calzado deportivo", gender: "Hombre", price: 730000, images: ["/productos/3028512428-1.webp","/productos/3028512428-2.webp"], sizes: ["8","8.5","9.5","10","10.5","11","12","13"], colors: ["Blanco"], stock: 10, description: "Calzado Deportivo Under Armour para hombre en color blanco. Talles disponibles: 8, 8.5, 9.5, 10, 10.5, 11, 12, 13. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "fb1802400", sku: "FB1802400", code: 17650, name: "Jordan Zion 4 Azul/Negro", brand: "Jordan", category: "calzados", subcategory: "Calzado deportivo", gender: "Hombre", price: 1290000, images: ["/productos/FB1802400-1.webp","/productos/FB1802400-2.webp"], sizes: ["7.5","8","10","10.5"], colors: ["Azul"], stock: 5, description: "Calzado Deportivo Jordan para hombre en color azul. Talles disponibles: 7.5, 8, 10, 10.5. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "43263432voa", sku: "43263432VOA", code: 21885, name: "Olympikus Vos 3 Negro/Marron", brand: "Olympikus", category: "calzados", subcategory: "Calzado deportivo", gender: "Mujer", price: 440000, images: ["/productos/43263432VOA-1.webp","/productos/43263432VOA-2.webp"], sizes: ["36","37","38","39"], colors: ["Negro"], stock: 6, description: "Calzado Deportivo Olympikus para mujer en color negro. Talles disponibles: 36, 37, 38, 39. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "tsets2501c", sku: "TSETS2501C", code: 18392, name: "Joma Set Men Negro/Turquesa", brand: "Joma", category: "calzados", subcategory: "Calzado deportivo", gender: "Hombre", price: 735000, images: ["/productos/TSETS2501C-1.webp","/productos/TSETS2501C-2.webp"], sizes: ["45"], colors: ["Negro"], stock: 1, description: "Calzado Deportivo Joma para hombre en color negro. Talles disponibles: 45. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "1012b650100", sku: "1012B650100", code: 18399, name: "Asics Novablast 4 Rosa/Blanco", brand: "Asics", category: "calzados", subcategory: "Calzado deportivo", gender: "Mujer", price: 1485000, images: ["/productos/1012B650100-1.webp","/productos/1012B650100-2.webp"], sizes: ["5.5","7","7.5"], colors: ["Rosa"], stock: 6, description: "Calzado Deportivo Asics para mujer en color rosa. Talles disponibles: 5.5, 7, 7.5. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "p312427", sku: "P312427", code: 20717, name: "Bota Cat Fandom Hiker Marron", brand: "Cat", category: "calzados", subcategory: "Calzados casuales", gender: "Mujer", price: 980000, images: ["/productos/P312427-1.webp","/productos/P312427-2.webp"], sizes: ["5","5.5","6","6.5","7"], colors: ["Marron"], stock: 6, description: "Calzados Casuales Cat para mujer en color marron. Talles disponibles: 5, 5.5, 6, 6.5, 7. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "u01fb042210", sku: "U01FB042210", code: 19280, name: "Umbreo Pro 5 Club Gris/Rosa", brand: "Umbro", category: "calzados", subcategory: "Calzado deportivo", gender: "Hombre", price: 750000, images: ["/productos/U01FB042210-1.webp","/productos/U01FB042210-2.webp"], sizes: ["41","42","44"], colors: ["Gris"], stock: 4, description: "Calzado Deportivo Umbro para hombre en color gris. Talles disponibles: 41, 42, 44. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "w6721222272", sku: "W6721222272", code: 18740, name: "Alpargata 361 Gris/Blanco", brand: "361", category: "calzados", subcategory: "Ojotas y sandalias", price: 240000, images: ["/productos/W6721222272-1.webp","/productos/W6721222272-2.webp"], sizes: ["8","8.5","9","10","10.5"], colors: ["Gris"], stock: 9, description: "Ojotas Y Sandalias 361 en color gris. Talles disponibles: 8, 8.5, 9, 10, 10.5. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "232466bkgy", sku: "232466BKGY", code: 17786, name: "Skechers Slip Ins Negro/Blanco", brand: "Skechers", category: "calzados", subcategory: "Calzado deportivo", gender: "Hombre", price: 650000, images: ["/productos/232466BKGY-1.webp","/productos/232466BKGY-2.webp"], sizes: ["7.5","8","9","10","10.5"], colors: ["Negro"], stock: 8, description: "Calzado Deportivo Skechers para hombre en color negro. Talles disponibles: 7.5, 8, 9, 10, 10.5. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "100209990", sku: "100209990", code: 17920, name: "Reebok Glide Unisex Blanco/Verde", brand: "Reebook", category: "calzados", subcategory: "Calzado deportivo", price: 580000, images: ["/productos/100209990-1.webp","/productos/100209990-2.webp"], sizes: ["8","9.5","10","10.5","11"], colors: ["Blanco"], stock: 6, description: "Calzado Deportivo Reebook en color blanco. Talles disponibles: 8, 9.5, 10, 10.5, 11. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "wz4024510xb7", sku: "WZ4024510XB7", code: 20419, name: "Wilson Basket Gs Warriors", brand: "Wilson", category: "calzados", subcategory: "Calzado deportivo", price: 160000, images: ["/productos/WZ4024510XB7-1.webp","/productos/WZ4024510XB7-2.webp"], sizes: ["7"], colors: [], stock: 3, description: "Calzado Deportivo Wilson. Talles disponibles: 7. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "vn0a45nmiju", sku: "VN0A45NMIJU", code: 17969, name: "Vans Filmore Decon Negro/Blanco", brand: "Vans", category: "calzados", subcategory: "Calzado deportivo", gender: "Unisex", price: 460000, images: ["/productos/VN0A45NMIJU-1.webp","/productos/VN0A45NMIJU-2.webp"], sizes: ["7.5"], colors: ["Negro"], stock: 2, description: "Calzado Deportivo Vans para unisex en color negro. Talles disponibles: 7.5. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
 
-  // ── RUNNING ─────────────────────────────────────────
-  { id: 'zap-pegasus', name: 'Zapatilla Pegasus 41', brand: 'Nike', category: 'running', type: 'calzado', price: 890000, images: [img.shoeWhiteNike, img.shoeJump], sizes: SHOE_SIZES, colors: ['Blanco', 'Negro'], stock: 22, rating: 4.9, reviews: 178, tags: ['new', 'bestseller'], description: `Amortiguación ReactX para tus kilómetros diarios. ${D}` },
-  { id: 'zap-ultraboost', name: 'Zapatilla Ultraboost Light', brand: 'Adidas', category: 'running', type: 'calzado', price: 950000, compareAt: 1150000, images: [img.shoeAdidasWhite, img.shoeWalk], sizes: SHOE_SIZES, colors: ['Blanco', 'Gris'], stock: 15, rating: 4.8, reviews: 143, tags: ['oferta'], description: `La espuma BOOST más liviana de la historia. ${D}` },
-  { id: 'zap-velocity', name: 'Zapatilla Velocity Nitro 3', brand: 'Puma', category: 'running', type: 'calzado', price: 720000, images: [img.shoeRed, img.shoeTraining], sizes: SHOE_SIZES, colors: ['Rojo', 'Negro'], stock: 27, rating: 4.6, reviews: 71, tags: [], description: `Espuma NITRO para máximo retorno de energía. ${D}` },
-  { id: 'zap-wave', name: 'Zapatilla Wave Rider TR', brand: 'Fila', category: 'running', type: 'calzado', price: 480000, compareAt: 620000, images: [img.shoeTrail, img.shoeYellow], sizes: SHOE_SIZES, colors: ['Amarillo', 'Azul'], stock: 33, rating: 4.4, reviews: 47, tags: ['oferta'], description: `Zapatilla de trail con suela de agarre multiterreno. ${D}` },
-  { id: 'rem-dryfit', name: 'Remera Dri-FIT Miler', brand: 'Nike', category: 'running', type: 'prenda', price: 165000, images: [img.teeWhite, img.runSunset], sizes: CLOTH_SIZES, colors: ['Blanco', 'Negro', 'Verde'], stock: 70, rating: 4.5, reviews: 52, tags: [], description: `Tejido que absorbe el sudor para correr fresco. ${D}` },
-  { id: 'calza-run', name: 'Calza Larga Own The Run', brand: 'Adidas', category: 'running', type: 'prenda', price: 240000, images: [img.leggings, img.track], sizes: CLOTH_SIZES, colors: ['Negro'], stock: 38, rating: 4.7, reviews: 63, tags: ['bestseller'], description: `Calza con bolsillo trasero con cierre y detalles reflectivos. ${D}` },
-  { id: 'campera-wind', name: 'Campera Rompeviento Fast-R', brand: 'New Balance', category: 'running', type: 'prenda', price: 380000, compareAt: 450000, images: [img.trackStart, img.runSunset], sizes: CLOTH_SIZES, colors: ['Verde', 'Negro'], stock: 20, rating: 4.5, reviews: 31, tags: ['oferta'], description: `Rompeviento plegable ultraliviano con capucha. ${D}` },
+  // ── PRENDAS ───────────────────────────────────────────
+  { id: "dq5471504", sku: "DQ5471504", code: 21580, name: "Campera Nike Nsw Club Rosa", brand: "Nike", category: "prendas", subcategory: "Indumentaria superior", gender: "Mujer", price: 450000, images: ["/productos/DQ5471504-1.webp","/productos/DQ5471504-2.webp"], sizes: ["M"], colors: ["Rosado"], stock: 1, description: "Indumentaria Superior Nike para mujer en color rosado. Talles disponibles: M. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "jv9902", sku: "JV9902", code: 21858, name: "Hooddie Adidas Bl Azul", brand: "Adidas", category: "prendas", subcategory: "Conjuntos y abrigos", gender: "Mujer", price: 295000, images: ["/productos/JV9902-1.webp","/productos/JV9902-2.webp"], sizes: ["M","L","XL"], colors: ["Azul"], stock: 5, description: "Conjuntos Y Abrigos Adidas para mujer en color azul. Talles disponibles: M, L, XL. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "1379517477", sku: "1379517477", code: 21400, name: "Hoddie Under Verde", brand: "Under Armour", category: "prendas", subcategory: "Indumentaria superior", gender: "Mujer", price: 300000, images: ["/productos/1379517477-1.webp","/productos/1379517477-2.webp"], sizes: ["M"], colors: ["Verde"], stock: 1, description: "Indumentaria Superior Under Armour para mujer en color verde. Talles disponibles: M. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "wp41500ovn", sku: "WP41500OVN", code: 17269, name: "Jogger Nb Verde", brand: "New Balance", category: "prendas", subcategory: "Indumentaria inferior", gender: "Mujer", price: 350000, images: ["/productos/WP41500OVN-1.webp","/productos/WP41500OVN-2.webp"], sizes: ["XL"], colors: ["Verde"], stock: 1, description: "Indumentaria Inferior New Balance para mujer en color verde. Talles disponibles: XL. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "52661001", sku: "52661001", code: 18165, name: "Short Puma Dry Run Negro", brand: "Puma", category: "prendas", subcategory: "Indumentaria inferior", gender: "Hombre", price: 415000, images: ["/productos/52661001-1.webp","/productos/52661001-2.webp"], sizes: ["S","XL","XXL"], colors: ["Negro"], stock: 4, description: "Indumentaria Inferior Puma para hombre en color negro. Talles disponibles: S, XL, XXL. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "95f315023", sku: "95F315023", code: 19740, name: "Remera Jordan Comic Negro/Amarillo", brand: "Jordan", category: "prendas", subcategory: "Indumentaria superior", gender: "Hombre", price: 210000, images: ["/productos/95F315023-1.webp","/productos/95F315023-2.webp"], sizes: ["M"], colors: ["Negro"], stock: 2, description: "Indumentaria Superior Jordan para hombre en color negro. Talles disponibles: M. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "2042a316704", sku: "2042A316704", code: 18876, name: "Musculosa Asics Rosado", brand: "Asics", category: "prendas", subcategory: "Indumentaria superior", gender: "Mujer", price: 375000, images: ["/productos/2042A316704-1.webp","/productos/2042A316704-2.webp"], sizes: ["XS","S","L"], colors: ["Rosado"], stock: 5, description: "Indumentaria Superior Asics para mujer en color rosado. Talles disponibles: XS, S, L. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "fifjs0047rd2", sku: "FIFJS0047RD2", code: 21409, name: "Camiseta España H Wc26", brand: "Sin Marca", category: "prendas", subcategory: "Prendas", gender: "Hombre", price: 200000, images: ["/productos/FIFJS0047RD2-1.webp","/productos/FIFJS0047RD2-2.webp"], sizes: ["L","XL"], colors: [], stock: 2, description: "Prendas Sin Marca para hombre. Talles disponibles: L, XL. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "ev55hcm281", sku: "EV55HCM281", code: 19537, name: "Short Con Calza Everlast Negro", brand: "Everlast", category: "prendas", subcategory: "Indumentaria inferior", price: 240000, images: ["/productos/EV55HCM281-1.webp","/productos/EV55HCM281-2.webp"], sizes: ["S","XL"], colors: ["Negro"], stock: 2, description: "Indumentaria Inferior Everlast en color negro. Talles disponibles: S, XL. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "vn000st5y28", sku: "VN000ST5Y28", code: 21710, name: "Hoodie Vans Stacked Hi Negro", brand: "Vans", category: "prendas", subcategory: "Conjuntos y abrigos", gender: "Unisex", price: 415000, images: ["/productos/VN000ST5Y28-1.webp","/productos/VN000ST5Y28-2.webp"], sizes: ["S","M","XL"], colors: ["Negro"], stock: 4, description: "Conjuntos Y Abrigos Vans para unisex en color negro. Talles disponibles: S, M, XL. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "404022010121cat", sku: "404022010121CAT", code: 21559, name: "Campera Cat Insulate Work Negro", brand: "Cat", category: "prendas", subcategory: "Indumentaria superior", gender: "Hombre", price: 730000, images: ["/productos/404022010121CAT-1.webp","/productos/404022010121CAT-2.webp"], sizes: ["S","L","XL"], colors: ["Negro"], stock: 4, description: "Indumentaria Superior Cat para hombre en color negro. Talles disponibles: S, L, XL. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "166988", sku: "166988", code: 18945, name: "Remera Topper Negro", brand: "Topper", category: "prendas", subcategory: "Indumentaria superior", price: 110000, images: ["/productos/166988-1.webp","/productos/166988-2.webp"], sizes: ["XL"], colors: ["Negro"], stock: 2, description: "Indumentaria Superior Topper en color negro. Talles disponibles: XL. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "fifjs0047nv1", sku: "FIFJS0047NV1", code: 21566, name: "Remera Fex Pro Francia", brand: "Fex Pro", category: "prendas", subcategory: "Indumentaria superior", gender: "Hombre", price: 200000, images: ["/productos/FIFJS0047NV1-1.webp","/productos/FIFJS0047NV1-2.webp"], sizes: ["M","L"], colors: [], stock: 3, description: "Indumentaria Superior Fex Pro para hombre. Talles disponibles: M, L. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "im8586", sku: "IM8586", code: 19062, name: "Musculosa Adizero Negro", brand: "Lotto", category: "prendas", subcategory: "Indumentaria superior", price: 235000, images: ["/productos/IM8586-1.webp","/productos/IM8586-2.webp"], sizes: ["M","XL"], colors: ["Negro"], stock: 3, description: "Indumentaria Superior Lotto en color negro. Talles disponibles: M, XL. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "100215505", sku: "100215505", code: 21069, name: "Sweater Reebok Blanco/Azul", brand: "Reebook", category: "prendas", subcategory: "Indumentaria superior", gender: "Unisex", price: 390000, images: ["/productos/100215505-1.webp","/productos/100215505-2.webp"], sizes: ["L"], colors: ["Blanco"], stock: 1, description: "Indumentaria Superior Reebook para unisex en color blanco. Talles disponibles: L. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "im9795010", sku: "IM9795010", code: 21579, name: "Hooddie Nike Jumpman Negro", brand: "Nike", category: "prendas", subcategory: "Indumentaria superior", gender: "Hombre", price: 385000, images: ["/productos/IM9795010-1.webp","/productos/IM9795010-2.webp"], sizes: ["XL"], colors: ["Negro"], stock: 1, description: "Indumentaria Superior Nike para hombre en color negro. Talles disponibles: XL. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "jn1970", sku: "JN1970", code: 21148, name: "Short Pollera Adidas Negro", brand: "Adidas", category: "prendas", subcategory: "Indumentaria inferior", gender: "Mujer", price: 300000, images: ["/productos/JN1970-1.webp","/productos/JN1970-2.webp"], sizes: ["XS","S","M","L"], colors: ["Negro"], stock: 4, description: "Indumentaria Inferior Adidas para mujer en color negro. Talles disponibles: XS, S, M, L. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
 
-  // ── FITNESS ─────────────────────────────────────────
-  { id: 'zap-metcon', name: 'Zapatilla Metcon 9', brand: 'Nike', category: 'fitness', type: 'calzado', price: 780000, images: [img.shoeBlackNike, img.gymMan], sizes: SHOE_SIZES, colors: ['Negro'], stock: 19, rating: 4.8, reviews: 96, tags: ['bestseller'], description: `Base estable para levantamientos y HIIT. ${D}` },
-  { id: 'zap-nano', name: 'Zapatilla Nano X4', brand: 'Reebok', category: 'fitness', type: 'calzado', price: 690000, compareAt: 820000, images: [img.shoeTraining, img.shoeBlackSole], sizes: SHOE_SIZES, colors: ['Gris', 'Negro'], stock: 25, rating: 4.7, reviews: 84, tags: ['oferta'], description: `La zapatilla oficial del fitness, flexibilidad y soporte. ${D}` },
-  { id: 'top-deportivo', name: 'Top Deportivo Swoosh', brand: 'Nike', category: 'fitness', type: 'prenda', price: 190000, images: [img.yoga, img.gymGirl], sizes: CLOTH_SIZES, colors: ['Negro', 'Rosa'], stock: 42, rating: 4.6, reviews: 58, tags: ['new'], description: `Sujeción media con banda elástica y espalda deportiva. ${D}` },
-  { id: 'calza-biker', name: 'Calza Biker Studio Lux', brand: 'Puma', category: 'fitness', type: 'prenda', price: 175000, images: [img.leggings, img.yoga], sizes: CLOTH_SIZES, colors: ['Negro', 'Gris'], stock: 55, rating: 4.5, reviews: 44, tags: [], description: `Calza corta de tiro alto, tacto suave second-skin. ${D}` },
-  { id: 'buzo-oversize', name: 'Buzo Oversize Essentials', brand: 'Adidas', category: 'fitness', type: 'prenda', price: 320000, compareAt: 390000, images: [img.hoodie, img.teeHanger], sizes: CLOTH_SIZES, colors: ['Gris', 'Negro', 'Verde'], stock: 36, rating: 4.7, reviews: 77, tags: ['oferta', 'bestseller'], description: `Buzo de algodón frisado con capucha, fit relajado. ${D}` },
-  { id: 'guantes-gym', name: 'Guantes de Entrenamiento Pro', brand: 'Reebok', category: 'fitness', type: 'accesorio', price: 85000, images: [img.gymGirl, img.gym], sizes: ['S', 'M', 'L'], colors: ['Negro'], stock: 65, rating: 4.3, reviews: 22, tags: [], description: `Palma acolchada antideslizante, muñequera integrada. ${D}` },
-  { id: 'botella-termica', name: 'Botella Térmica 750ml', brand: 'Under Armour', category: 'fitness', type: 'accesorio', price: 120000, images: [img.bottleBlack, img.bottle], sizes: ONE_SIZE, colors: ['Negro', 'Verde'], stock: 90, rating: 4.6, reviews: 41, tags: ['new'], description: `Mantiene tu bebida fría por 24 horas. Libre de BPA. ${D}` },
-
-  // ── LIFESTYLE ───────────────────────────────────────
-  { id: 'zap-af1', name: 'Zapatilla Air Force 1 ´07', brand: 'Nike', category: 'lifestyle', type: 'calzado', price: 850000, images: [img.shoeWhiteNike, img.shoeWalk], sizes: SHOE_SIZES, colors: ['Blanco'], stock: 28, rating: 4.9, reviews: 312, tags: ['bestseller'], description: `El clásico que nunca pasa de moda. Cuero premium. ${D}` },
-  { id: 'zap-jordan', name: 'Zapatilla Jordan 1 Mid', brand: 'Nike', category: 'lifestyle', type: 'calzado', price: 1050000, compareAt: 1250000, images: [img.shoeJordan, img.shoeWall], sizes: SHOE_SIZES, colors: ['Rojo/Negro'], stock: 12, rating: 4.8, reviews: 156, tags: ['oferta', 'bestseller'], description: `Ícono del basket llevado a la calle. ${D}` },
-  { id: 'zap-nmd', name: 'Zapatilla NMD_R1', brand: 'Adidas', category: 'lifestyle', type: 'calzado', price: 740000, images: [img.shoeNmd, img.shoeAdidasWhite], sizes: SHOE_SIZES, colors: ['Negro', 'Blanco'], stock: 21, rating: 4.6, reviews: 88, tags: [], description: `Comodidad BOOST con estilo urbano futurista. ${D}` },
-  { id: 'zap-suede', name: 'Zapatilla Suede Classic XXI', brand: 'Puma', category: 'lifestyle', type: 'calzado', price: 420000, compareAt: 520000, images: [img.shoeVans, img.shoeBox], sizes: SHOE_SIZES, colors: ['Azul', 'Rojo', 'Negro'], stock: 34, rating: 4.5, reviews: 64, tags: ['oferta'], description: `El clásico de gamuza desde 1968. ${D}` },
-  { id: 'zap-disruptor', name: 'Zapatilla Disruptor II', brand: 'Fila', category: 'lifestyle', type: 'calzado', price: 490000, images: [img.shoePairOrange, img.shoeWalk], sizes: SHOE_SIZES, colors: ['Blanco'], stock: 26, rating: 4.4, reviews: 73, tags: [], description: `Chunky sneaker con plataforma, estilo noventoso. ${D}` },
-  { id: 'rem-boxy', name: 'Remera Boxy Club', brand: 'Umbro', category: 'lifestyle', type: 'prenda', price: 140000, images: [img.teeHanger, img.teeWhite], sizes: CLOTH_SIZES, colors: ['Blanco', 'Negro', 'Crema'], stock: 58, rating: 4.3, reviews: 29, tags: ['new'], description: `Remera de fit amplio con logo bordado. ${D}` },
-  { id: 'buzo-crew', name: 'Buzo Crewneck Classics', brand: 'Reebok', category: 'lifestyle', type: 'prenda', price: 290000, images: [img.hoodie, img.teeWhite], sizes: CLOTH_SIZES, colors: ['Gris', 'Verde'], stock: 30, rating: 4.5, reviews: 35, tags: [], description: `Buzo cuello redondo de felpa francesa. ${D}` },
-
-  // ── ACCESORIOS ──────────────────────────────────────
-  { id: 'moch-elemental', name: 'Mochila Elemental 21L', brand: 'Nike', category: 'accesorios', type: 'accesorio', price: 260000, images: [img.backpack, img.backpackYellow], sizes: ONE_SIZE, colors: ['Negro', 'Amarillo'], stock: 44, rating: 4.6, reviews: 57, tags: ['bestseller'], description: `Mochila con compartimiento para notebook de 15". ${D}` },
-  { id: 'moch-urban', name: 'Mochila Urban Roll-Top', brand: 'Adidas', category: 'accesorios', type: 'accesorio', price: 310000, compareAt: 380000, images: [img.backpackYellow, img.backpack], sizes: ONE_SIZE, colors: ['Amarillo', 'Negro'], stock: 23, rating: 4.5, reviews: 33, tags: ['oferta'], description: `Cierre roll-top resistente al agua. ${D}` },
-  { id: 'gorra-heritage', name: 'Gorra Heritage86', brand: 'Nike', category: 'accesorios', type: 'accesorio', price: 130000, images: [img.cap, img.teeWhite], sizes: ONE_SIZE, colors: ['Negro', 'Blanco', 'Verde'], stock: 75, rating: 4.4, reviews: 48, tags: [], description: `Gorra ajustable de sarga lavada con logo bordado. ${D}` },
-  { id: 'botinera-umbro', name: 'Botinera Team Kit', brand: 'Umbro', category: 'accesorios', type: 'accesorio', price: 130000, images: [img.backpack, img.bootsClose], sizes: ONE_SIZE, colors: ['Negro'], stock: 50, rating: 4.3, reviews: 21, tags: ['new'], description: `Botinera con ventilación y bolsillo exterior. ${D}` },
-  { id: 'medias-crew3', name: 'Medias Crew Pack x3', brand: 'Puma', category: 'accesorios', type: 'accesorio', price: 90000, images: [img.teeWhite, img.shoeWalk], sizes: ['37-40', '41-44'], colors: ['Blanco', 'Negro'], stock: 110, rating: 4.5, reviews: 66, tags: [], description: `Pack de 3 pares de medias de algodón peinado. ${D}` },
-  { id: 'riñonera', name: 'Riñonera Waistbag Core', brand: 'Fila', category: 'accesorios', type: 'accesorio', price: 110000, compareAt: 145000, images: [img.backpackYellow, img.cap], sizes: ONE_SIZE, colors: ['Negro', 'Verde'], stock: 39, rating: 4.2, reviews: 18, tags: ['oferta'], description: `Riñonera compacta con correa ajustable. ${D}` },
-  { id: 'pelota-basket', name: 'Pelota de Básquet TF-250', brand: 'Spalding', category: 'accesorios', type: 'accesorio', price: 220000, images: [img.hoop, img.gym], sizes: ONE_SIZE, colors: ['Naranja'], stock: 32, rating: 4.7, reviews: 39, tags: [], description: `Pelota N°7 de cuero compuesto, indoor/outdoor. ${D}` },
+  // ── ACCESORIOS ────────────────────────────────────────
+  { id: "hq0257010", sku: "HQ0257010", code: 15385, name: "Guante De Arquero Nike Negro/Blanco", brand: "Nike", category: "accesorios", subcategory: "Accesorios", gender: "Unisex", price: 225000, images: ["/productos/HQ0257010-1.webp","/productos/HQ0257010-2.webp"], sizes: ["6","7","8"], colors: ["Negro/Blanco"], stock: 5, description: "Accesorios Nike para unisex en color negro/blanco. Talles disponibles: 6, 7, 8. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "jc6453", sku: "JC6453", code: 17891, name: "Media Adidas 1/4 Negro/Gris", brand: "Adidas", category: "accesorios", subcategory: "Medias", gender: "Unisex", price: 120000, images: ["/productos/JC6453-1.webp","/productos/JC6453-2.webp"], sizes: ["S"], colors: ["Negro"], stock: 1, description: "Medias Adidas para unisex en color negro. Talles disponibles: S. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "05475702", sku: "05475702", code: 18917, name: "Billetera Puma Azul", brand: "Puma", category: "accesorios", subcategory: "Bolsos y mochilas", gender: "Unisex", price: 75000, images: ["/productos/05475702-1.webp","/productos/05475702-2.webp"], sizes: ["Único"], colors: ["Azul"], stock: 1, description: "Bolsos Y Mochilas Puma para unisex en color azul. Talles disponibles: Único. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "65aa015g", sku: "65AA015G", code: 19380, name: "Mochila Wilson Verde/Gris", brand: "Wilson", category: "accesorios", subcategory: "Bolsos y mochilas", gender: "Unisex", price: 110000, images: ["/productos/65AA015G-1.webp","/productos/65AA015G-2.webp"], sizes: ["Único"], colors: ["Verde"], stock: 4, description: "Bolsos Y Mochilas Wilson para unisex en color verde. Talles disponibles: Único. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "1380922490", sku: "1380922490", code: 11247, name: "Bandolera Under Celeste/Rosa", brand: "Under Armour", category: "accesorios", subcategory: "Bolsos y mochilas", gender: "Unisex", price: 330000, images: ["/productos/1380922490-1.webp","/productos/1380922490-2.webp"], sizes: ["Único"], colors: ["Celeste"], stock: 3, description: "Bolsos Y Mochilas Under Armour para unisex en color celeste. Talles disponibles: Único. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "1241116893", sku: "1241116893", code: 11621, name: "Short De Baño Negro/Gris", brand: "Speedo", category: "accesorios", subcategory: "Natación", gender: "Hombre", price: 240000, images: ["/productos/1241116893-1.webp","/productos/1241116893-2.webp"], sizes: ["34"], colors: ["Negro"], stock: 1, description: "Natación Speedo para hombre en color negro. Talles disponibles: 34. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "dx9632010", sku: "DX9632010", code: 7807, name: "Media Jordan 3 1/4 Negra", brand: "Jordan", category: "accesorios", subcategory: "Medias", gender: "Unisex", price: 160000, images: ["/productos/DX9632010-1.webp","/productos/DX9632010-2.webp"], sizes: ["M"], colors: ["Negra"], stock: 1, description: "Medias Jordan para unisex en color negra. Talles disponibles: M. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "tt32ps001", sku: "TT32PS001", code: 14609, name: "Vaso Hydro Negro 32 Oz", brand: "Hydro Flask", category: "accesorios", subcategory: "Hidratación y accesorios", gender: "Unisex", price: 245000, images: ["/productos/TT32PS001-1.webp","/productos/TT32PS001-2.webp"], sizes: ["Único"], colors: ["Negro"], stock: 2, description: "Hidratación Y Accesorios Hydro Flask para unisex en color negro. Talles disponibles: Único. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "800233214502", sku: "800233214502", code: 18552, name: "Lentes De Natacion Biofuse 2.0", brand: "Sin Marca", category: "accesorios", subcategory: "Natación", gender: "Unisex", price: 160000, images: ["/productos/800233214502-1.webp","/productos/800233214502-2.webp"], sizes: ["Único"], colors: [], stock: 8, description: "Natación Sin Marca para unisex. Talles disponibles: Único. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "84350677", sku: "84350677", code: 20938, name: "Mochila Cat Gris/Negro", brand: "Cat", category: "accesorios", subcategory: "Bolsos y mochilas", gender: "Unisex", price: 390000, images: ["/productos/84350677-1.webp","/productos/84350677-2.webp"], sizes: ["Único"], colors: ["Gris"], stock: 4, description: "Bolsos Y Mochilas Cat para unisex en color gris. Talles disponibles: Único. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "u23eq045444u", sku: "U23EQ045444U", code: 22084, name: "Cinta Capitan Umbro Rojo", brand: "Umbro", category: "accesorios", subcategory: "Accesorios", gender: "Unisex", price: 65000, images: ["/productos/U23EQ045444U-1.webp","/productos/U23EQ045444U-2.webp"], sizes: ["Único"], colors: ["Rojo"], stock: 6, description: "Accesorios Umbro para unisex en color rojo. Talles disponibles: Único. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "5214111710", sku: "5214111710", code: 20154, name: "Pelota Penalty Fs Lider Blanco/Naranja", brand: "Penalty", category: "accesorios", subcategory: "Pelotas y redes", gender: "Unisex", price: 220000, images: ["/productos/5214111710-1.webp","/productos/5214111710-2.webp"], sizes: ["5"], colors: ["Blanco"], stock: 6, description: "Pelotas Y Redes Penalty para unisex en color blanco. Talles disponibles: 5. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "321m85w005", sku: "321M85W005", code: 17982, name: "Bolson Kappa Negro", brand: "Kappa", category: "accesorios", subcategory: "Bolsos y mochilas", gender: "Unisex", price: 250000, images: ["/productos/321M85W005-1.webp","/productos/321M85W005-2.webp"], sizes: ["M"], colors: ["Negro"], stock: 1, description: "Bolsos Y Mochilas Kappa para unisex en color negro. Talles disponibles: M. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "cp031", sku: "CP031", code: 13707, name: "Protector De Zapatillas Crep", brand: "Crep Protect", category: "accesorios", subcategory: "Hidratación y accesorios", gender: "Unisex", price: 100000, images: ["/productos/CP031-1.webp","/productos/CP031-2.webp"], sizes: ["Único"], colors: [], stock: 3, description: "Hidratación Y Accesorios Crep Protect para unisex. Talles disponibles: Único. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "b7g2000m3p", sku: "B7G2000M3P", code: 20417, name: "Molten Rubber Basket Fiba", brand: "Molten", category: "accesorios", subcategory: "Pelotas y redes", gender: "Unisex", price: 130000, images: ["/productos/B7G2000M3P-1.webp","/productos/B7G2000M3P-2.webp"], sizes: ["7"], colors: [], stock: 11, description: "Pelotas Y Redes Molten para unisex. Talles disponibles: 7. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  { id: "vn000c32ba5", sku: "VN000C32BA5", code: 2202, name: "Billetera Vans", brand: "Vans", category: "accesorios", subcategory: "Bolsos y mochilas", gender: "Unisex", price: 105000, images: ["/productos/VN000C32BA5-1.webp","/productos/VN000C32BA5-2.webp"], sizes: ["Único"], colors: [], stock: 1, description: "Bolsos Y Mochilas Vans para unisex. Talles disponibles: Único. Producto original con garantía oficial. Retiralo en nuestras sucursales de Ciudad del Este o Hernandarias, o recibilo en tu casa." },
+  // </catalogo>
 ]
 
 export const categories: {
@@ -130,44 +96,45 @@ export const categories: {
   thumb: string
 }[] = [
   { slug: 'todos', label: 'Todos', tagline: 'TODO EL DEPORTE EN UN SOLO LUGAR', cover: u('photo-1556906781-9a412961c28c', 1400), thumb: u('photo-1556906781-9a412961c28c', 500) },
-  { slug: 'futbol', label: 'Fútbol', tagline: 'JUGÁ COMO LOCAL', cover: u('photo-1522778119026-d647f0596c20', 1400), thumb: u('photo-1517466787929-bc90951d0974', 500) },
-  { slug: 'running', label: 'Running', tagline: 'SUMÁ KILÓMETROS', cover: u('photo-1461896836934-ffe607ba8211', 1400), thumb: u('photo-1552674605-db6ffd4facb5', 500) },
-  { slug: 'fitness', label: 'Fitness', tagline: 'ENTRENÁ SIN EXCUSAS', cover: u('photo-1534438327276-14e5300c3a48', 1400), thumb: u('photo-1517836357463-d25dfeac3438', 500) },
-  { slug: 'lifestyle', label: 'Lifestyle', tagline: 'ESTILO DE LA CALLE', cover: u('photo-1552346154-21d32810aba3', 1400), thumb: u('photo-1556906781-9a412961c28c', 500) },
+  { slug: 'calzados', label: 'Calzados', tagline: 'PISÁ FUERTE', cover: u('photo-1552346154-21d32810aba3', 1400), thumb: u('photo-1595950653106-6c9ebd614d3a', 500) },
+  { slug: 'prendas', label: 'Prendas', tagline: 'ENTRENÁ CON ESTILO', cover: u('photo-1556821840-3a63f95609a7', 1400), thumb: u('photo-1521572163474-6864f9cf17ab', 500) },
   { slug: 'accesorios', label: 'Accesorios', tagline: 'COMPLETÁ TU EQUIPO', cover: u('photo-1553062407-98eeb64c6a62', 1400), thumb: u('photo-1553062407-98eeb64c6a62', 500) },
 ]
 
-export const brands = ['Nike', 'Adidas', 'Puma', 'Fila', 'Umbro', 'Reebok', 'New Balance', 'Under Armour', 'Spalding']
+export const brands = [...new Set(products.map((p) => p.brand))].sort()
+
+/** Subcategorías reales del stock, para el filtro "Tipo de producto". */
+export const subcategories = [...new Set(products.map((p) => p.subcategory))].sort()
 
 export const heroSlides = [
   {
-    id: 'mega-outlet',
+    id: 'temporada',
     image: u('photo-1512374382149-233c42b6a83b', 1600),
-    kicker: 'SOLO POR ESTA SEMANA',
-    title: 'MEGA OUTLET',
-    subtitle: 'Hasta 70% OFF en todas las marcas, en un solo lugar.',
-    cta: 'Ver ofertas',
-    to: '/productos?tag=oferta',
-    theme: 'dark' as const,
-  },
-  {
-    id: 'albirroja',
-    image: u('photo-1522778119026-d647f0596c20', 1600),
     kicker: 'NUEVA TEMPORADA',
-    title: 'VESTÍ LA ALBIRROJA',
-    subtitle: 'La camiseta oficial 2026 ya está en Larel.',
-    cta: 'Comprar ahora',
-    to: '/p/cam-albirroja',
+    title: 'LAS MARCAS QUE BUSCÁS',
+    subtitle: 'Nike, adidas, Jordan, New Balance y más, con garantía oficial.',
+    cta: 'Ver catálogo',
+    to: '/productos',
     theme: 'dark' as const,
   },
   {
-    id: 'running',
-    image: u('photo-1552674605-db6ffd4facb5', 1600),
-    kicker: 'COLECCIÓN RUNNING',
-    title: 'SUMÁ KILÓMETROS',
-    subtitle: 'Las zapatillas que te llevan más lejos.',
-    cta: 'Ver running',
-    to: '/c/running',
+    id: 'calzados',
+    image: u('photo-1552346154-21d32810aba3', 1600),
+    kicker: 'CALZADOS',
+    title: 'PISÁ FUERTE',
+    subtitle: 'Running, básquet, fútbol y urbano. Todos los talles disponibles.',
+    cta: 'Ver calzados',
+    to: '/c/calzados',
+    theme: 'dark' as const,
+  },
+  {
+    id: 'accesorios',
+    image: u('photo-1553062407-98eeb64c6a62', 1600),
+    kicker: 'ACCESORIOS',
+    title: 'COMPLETÁ TU EQUIPO',
+    subtitle: 'Mochilas, pelotas, medias y todo lo que falta en tu bolso.',
+    cta: 'Ver accesorios',
+    to: '/c/accesorios',
     theme: 'dark' as const,
   },
 ]
@@ -181,12 +148,12 @@ export const collections: {
   to: string
   span: string
 }[] = [
-  { id: 'albirroja', title: 'Modo Albirroja', kicker: 'Selección 2026', image: u('photo-1522778119026-d647f0596c20', 1200), to: '/c/futbol', span: 'md:col-span-2 md:row-span-2' },
-  { id: 'gym', title: 'Team Gym', kicker: 'Entrenamiento', image: u('photo-1534438327276-14e5300c3a48', 900), to: '/c/fitness', span: 'md:col-span-2' },
-  { id: 'street', title: 'Street Style', kicker: 'Lifestyle', image: u('photo-1552346154-21d32810aba3', 900), to: '/c/lifestyle', span: 'md:col-span-1' },
-  { id: 'km', title: 'Sumá kilómetros', kicker: 'Running', image: u('photo-1552674605-db6ffd4facb5', 900), to: '/c/running', span: 'md:col-span-1' },
-  { id: 'kids', title: 'Vuelta al cole', kicker: 'Mochilas y bolsos', image: u('photo-1553062407-98eeb64c6a62', 900), to: '/c/accesorios', span: 'md:col-span-2' },
-  { id: 'outlet', title: 'Outlet hasta -70%', kicker: 'Última oportunidad', image: u('photo-1512374382149-233c42b6a83b', 1200), to: '/productos?tag=oferta', span: 'md:col-span-2' },
+  { id: 'calzados', title: 'Calzados', kicker: 'Deportivo y urbano', image: u('photo-1552346154-21d32810aba3', 1200), to: '/c/calzados', span: 'md:col-span-2 md:row-span-2' },
+  { id: 'prendas', title: 'Prendas', kicker: 'Indumentaria', image: u('photo-1556821840-3a63f95609a7', 900), to: '/c/prendas', span: 'md:col-span-2' },
+  { id: 'nike', title: 'Modo Nike', kicker: 'Marca destacada', image: u('photo-1542291026-7eec264c27ff', 900), to: '/productos?marca=Nike', span: 'md:col-span-1' },
+  { id: 'jordan', title: 'Jordan', kicker: 'Básquet', image: u('photo-1556906781-9a412961c28c', 900), to: '/productos?marca=Jordan', span: 'md:col-span-1' },
+  { id: 'accesorios', title: 'Mochilas y bolsos', kicker: 'Accesorios', image: u('photo-1553062407-98eeb64c6a62', 900), to: '/c/accesorios', span: 'md:col-span-2' },
+  { id: 'adidas', title: 'Modo adidas', kicker: 'Marca destacada', image: u('photo-1579338559194-a162d19bf842', 1200), to: '/productos?marca=Adidas', span: 'md:col-span-2' },
 ]
 
 /** Brand cards for the wireframe's large-card carousel. */
@@ -194,12 +161,18 @@ export const brandCards: { name: string; tagline: string; image: string }[] = [
   { name: 'Nike', tagline: 'Just Do It', image: u('photo-1542291026-7eec264c27ff', 1000) },
   { name: 'Adidas', tagline: 'Impossible is Nothing', image: u('photo-1579338559194-a162d19bf842', 1000) },
   { name: 'Puma', tagline: 'Forever Faster', image: u('photo-1608231387042-66d1773070a5', 1000) },
-  { name: 'Fila', tagline: 'Heritage sport', image: u('photo-1491553895911-0055eca6402d', 1000) },
-  { name: 'Umbro', tagline: 'Hecho para la cancha', image: u('photo-1517466787929-bc90951d0974', 1000) },
-  { name: 'Reebok', tagline: 'Sport the unexpected', image: u('photo-1539185441755-769473a23570', 1000) },
+  { name: 'Jordan', tagline: 'Become Legendary', image: u('photo-1556906781-9a412961c28c', 1000) },
+  { name: 'New Balance', tagline: 'Fearlessly Independent', image: u('photo-1539185441755-769473a23570', 1000) },
+  { name: 'Vans', tagline: 'Off The Wall', image: u('photo-1491553895911-0055eca6402d', 1000) },
 ]
 
 export const getProduct = (id: string) => products.find((p) => p.id === id)
 
 export const related = (p: Product, n = 8) =>
-  products.filter((x) => x.id !== p.id && (x.category === p.category || x.brand === p.brand)).slice(0, n)
+  products.filter((x) => x.id !== p.id && (x.subcategory === p.subcategory || x.brand === p.brand)).slice(0, n)
+
+/** Últimos ingresos según código interno (correlativo del sistema de stock). */
+export const latest = (n = 8) => [...products].sort((a, b) => b.code - a.code).slice(0, n)
+
+/** Poco stock: lo que está por agotarse. */
+export const lowStock = (n = 8) => products.filter((p) => p.stock <= 2).slice(0, n)

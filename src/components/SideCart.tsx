@@ -20,7 +20,7 @@ export function SideCart() {
 
   const t = totals(items, coupon)
   const missingForFree = FREE_SHIPPING_MIN - (t.subtotal - t.discount)
-  const recos = products.filter((p) => !items.some((i) => i.productId === p.id) && p.compareAt).slice(0, 3)
+  const recos = products.filter((p) => !items.some((i) => i.productId === p.id) && p.category === 'accesorios').slice(0, 3)
 
   const submitCoupon = () => {
     if (!code.trim()) return
@@ -40,7 +40,7 @@ export function SideCart() {
           <div className="space-y-2">
             {recos.map((p) => (
               <div key={p.id} className="flex items-center gap-2 rounded-2xl bg-white p-2 shadow-lg">
-                <Img src={p.images[0]} alt={p.name} className="size-14 shrink-0 rounded-xl object-cover" />
+                <Img src={p.images[0]} alt={p.name} className="size-14 shrink-0 rounded-xl bg-white object-contain" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-xs font-semibold">{p.name}</p>
                   <p className="text-xs font-bold">{gs(p.price)}</p>
@@ -119,7 +119,7 @@ export function SideCart() {
                   return (
                     <li key={`${i.productId}-${i.size}`} className="flex gap-3 py-3">
                       <Link to={`/p/${p.id}`} onClick={() => setOpen(false)} className="shrink-0">
-                        <Img src={p.images[0]} alt={p.name} className="size-20 rounded-xl object-cover" />
+                        <Img src={p.images[0]} alt={p.name} className="size-20 rounded-xl bg-white object-contain" />
                       </Link>
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-semibold">{p.name}</p>

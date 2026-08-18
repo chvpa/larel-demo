@@ -38,7 +38,7 @@ export function Wishlist() {
           return (
             <div key={id} className="group relative">
               <Link to={`/p/${id}`}>
-                <Img src={p.images[0]} alt={p.name} className="aspect-[4/5] w-full rounded-2xl object-cover" />
+                <Img src={p.images[0]} alt={p.name} className="aspect-[4/5] w-full rounded-2xl bg-white object-contain" />
               </Link>
               <button
                 aria-label="Quitar de la lista"

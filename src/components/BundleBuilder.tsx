@@ -8,7 +8,6 @@ import { Img } from './Img'
 
 const SLOTS = 3
 const BUNDLE_OFF = 15
-const PICKABLE = ['zap-nano', 'buzo-oversize', 'botella-termica', 'top-deportivo', 'calza-biker', 'guantes-gym', 'medias-crew3', 'gorra-heritage']
 
 type Pick = { id: string; size: string }
 
@@ -18,7 +17,7 @@ export function BundleBuilder() {
   const add = useCart((s) => s.add)
   const setCartOpen = useUi((s) => s.setCartOpen)
 
-  const pool = PICKABLE.map((id) => products.find((p) => p.id === id)!).filter(Boolean)
+  const pool = products.filter((p) => p.category === 'accesorios').slice(0, 8)
   const chosen = picked.map((pick) => ({ ...pick, product: products.find((p) => p.id === pick.id)! }))
   const subtotal = chosen.reduce((a, c) => a + c.product.price, 0)
   const discount = picked.length === SLOTS ? Math.round((subtotal * BUNDLE_OFF) / 100) : 0
@@ -72,7 +71,7 @@ export function BundleBuilder() {
                   on ? 'border-ink' : 'border-transparent'
                 } ${full ? 'opacity-40' : ''}`}
               >
-                <Img src={p.images[0]} alt={p.name} className="aspect-[3/4] w-full object-cover" />
+                <Img src={p.images[0]} alt={p.name} className="aspect-[3/4] w-full bg-white object-contain" />
                 <span
                   className={`absolute right-2 top-2 grid size-7 place-items-center rounded-full transition ${
                     on ? 'bg-ink text-larel' : 'bg-white/90 text-ink'
@@ -104,7 +103,7 @@ export function BundleBuilder() {
               const c = chosen[i]
               return c ? (
                 <div key={i} className="flex items-center gap-2 rounded-xl bg-white p-2">
-                  <Img src={c.product.images[0]} alt={c.product.name} className="size-11 rounded-lg object-cover" />
+                  <Img src={c.product.images[0]} alt={c.product.name} className="size-11 rounded-lg bg-white object-contain" />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-xs font-semibold">{c.product.name}</p>
                     <p className="text-xs text-zinc-500">

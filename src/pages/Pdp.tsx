@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, Link, Navigate } from 'react-router-dom'
-import { Heart, Truck, RefreshCcw, ShieldCheck, Star, ChevronDown, ShoppingBag } from 'lucide-react'
+import { Heart, Truck, RefreshCcw, ShieldCheck, ChevronDown, ShoppingBag } from 'lucide-react'
 import { Skeleton } from 'boneyard-js/react'
 import { getProduct, related, categories } from '../data/products'
 import { useCart } from '../store/cart'
@@ -128,11 +128,11 @@ export function Pdp() {
             <div className="relative">
               <div className="no-scrollbar flex snap-x snap-mandatory overflow-x-auto overflow-y-hidden rounded-2xl [touch-action:pan-x] md:hidden">
                 {product.images.map((src, i) => (
-                  <Img key={i} src={src} alt={product.name} className="aspect-square w-full shrink-0 snap-center object-cover" />
+                  <Img key={i} src={src} alt={product.name} className="aspect-square w-full shrink-0 snap-center bg-white object-contain" />
                 ))}
               </div>
               <div className="hidden overflow-hidden rounded-2xl md:block">
-                <Img src={product.images[imgIdx]} alt={product.name} className="aspect-square w-full object-cover" />
+                <Img src={product.images[imgIdx]} alt={product.name} className="aspect-square w-full bg-white object-contain" />
               </div>
               <button
                 aria-label="Lista de deseos"
@@ -142,12 +142,12 @@ export function Pdp() {
               >
                 <Heart size={19} className={inWishlist ? 'fill-red-500 stroke-red-500' : ''} />
               </button>
-              {product.compareAt && (
+              {product.stock <= 2 && (
                 <span
                   data-no-skeleton
                   className="absolute left-3 top-3 rounded-full bg-larel px-3 py-1 text-xs font-bold text-ink"
                 >
-                  Oferta
+                  Últimas unidades
                 </span>
               )}
             </div>
@@ -158,7 +158,7 @@ export function Pdp() {
                   onClick={() => setImgIdx(i)}
                   className={`overflow-hidden rounded-xl border-2 ${i === imgIdx ? 'border-ink' : 'border-transparent'}`}
                 >
-                  <Img src={src} alt="" className="size-20 object-cover" />
+                  <Img src={src} alt="" className="size-20 bg-white object-contain" />
                 </button>
               ))}
             </div>
@@ -168,18 +168,18 @@ export function Pdp() {
           <div className="px-4 pt-4 md:px-0 md:pt-0">
             <p className="text-xs font-medium text-zinc-400">{product.brand}</p>
             <h1 className="headline mt-1 text-2xl md:text-3xl">{product.name}</h1>
-            <div className="mt-1.5 flex items-center gap-1.5 text-sm">
-              <Star size={15} className="fill-amber-400 stroke-amber-400" />
-              <b>{product.rating}</b>
-              <span className="text-zinc-400">({product.reviews} opiniones)</span>
+            <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-zinc-500">
+              <span>{product.subcategory}</span>
+              {product.gender && <span>· {product.gender}</span>}
+              <span>· SKU {product.sku}</span>
             </div>
             <div className="mt-3">
-              <Price price={product.price} compareAt={product.compareAt} size="lg" />
+              <Price price={product.price} size="lg" />
               <p className="mt-0.5 text-xs text-zinc-500">Hasta 6 cuotas sin interés con tarjetas asociadas</p>
             </div>
 
             {/* colors — square semi-rounded swatches with the colour / product image */}
-            <div className="mt-5">
+            <div className={`mt-5 ${product.colors.length ? '' : 'hidden'}`}>
               <p className="mb-2 text-sm font-semibold">
                 Color: <span className="font-normal text-zinc-500">{product.colors[color]}</span>
               </p>

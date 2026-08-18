@@ -2,7 +2,8 @@ import { useEffect, useState, type CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { Skeleton } from 'boneyard-js/react'
-import { products, categories, heroSlides, collections, IMG } from '../data/products'
+import { categories, heroSlides, collections, latest, lowStock, IMG } from '../data/products'
+import { seedCoupons } from '../data/coupons'
 import { useFakeLoad } from '../lib/useFakeLoad'
 import { ProductCard } from '../components/ProductCard'
 import { ProductRail } from '../components/ProductRail'
@@ -14,6 +15,8 @@ import { Reveal } from '../components/Reveal'
 import { Img } from '../components/Img'
 
 const delay = (ms: number) => ({ '--enter-delay': `${ms}ms` }) as CSSProperties
+
+const CUPON = seedCoupons[0]
 
 function Hero() {
   const [i, setI] = useState(0)
@@ -101,8 +104,8 @@ function Ticker() {
 
 export function Home() {
   const loading = useFakeLoad(750)
-  const nuevo = products.filter((p) => p.tags.includes('new') || p.tags.includes('bestseller')).slice(0, 8)
-  const ofertas = products.filter((p) => p.compareAt).slice(0, 8)
+  const nuevo = latest(8)
+  const pocoStock = lowStock(8)
 
   return (
     <div>
@@ -112,7 +115,7 @@ export function Home() {
       {/* categories — horizontal rail, never scrolls vertically */}
       <Reveal as="section" className="mx-auto mt-10 max-w-6xl md:px-4">
         <SectionHeader title="Elegí tu cancha" subtitle="Comprá por categoría" to="/productos" />
-        <div className="no-scrollbar flex gap-3 overflow-x-auto overflow-y-hidden overscroll-x-contain px-4 [touch-action:pan-x] md:grid md:grid-cols-5 md:overflow-visible md:px-0 md:[touch-action:auto]">
+        <div className="no-scrollbar flex gap-3 overflow-x-auto overflow-y-hidden overscroll-x-contain px-4 [touch-action:pan-x] md:grid md:grid-cols-3 md:overflow-visible md:px-0 md:[touch-action:auto]">
           {categories
             .filter((c) => c.slug !== 'todos')
             .map((c) => (
@@ -132,7 +135,7 @@ export function Home() {
 
       {/* nuevo */}
       <Reveal as="section" className="mx-auto mt-12 max-w-6xl md:px-4">
-        <SectionHeader title="Nuevo" subtitle="Lo último que llegó a Larel" to="/productos?tag=new" />
+        <SectionHeader title="Nuevo" subtitle="Lo último que llegó a Larel" to="/productos" />
         <Skeleton name="home-nuevo" loading={loading}>
           <div className="grid grid-cols-2 gap-x-3 gap-y-8 px-4 md:grid-cols-4 md:px-0">
             {nuevo.map((p) => (
@@ -178,13 +181,13 @@ export function Home() {
         <img src={IMG.shoeWall} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />
         <div className="relative mx-auto flex max-w-2xl flex-col items-center px-4 py-14 text-center md:py-20">
           <Reveal delay={0}>
-            <p className="text-xs font-semibold text-larel">⚡ Oferta relámpago</p>
+            <p className="text-xs font-semibold text-larel">⚡ Cupón por tiempo limitado</p>
           </Reveal>
           <Reveal delay={100}>
-            <h2 className="headline-xl mt-2 text-4xl text-white md:text-6xl">Hasta 40% OFF en zapatillas</h2>
+            <h2 className="headline-xl mt-2 text-4xl text-white md:text-6xl">{CUPON.value}% OFF con el código {CUPON.code}</h2>
           </Reveal>
           <Reveal delay={200}>
-            <p className="mt-2 text-sm text-white/70">Termina cuando se acabe el reloj. Sin códigos, sin vueltas.</p>
+            <p className="mt-2 text-sm text-white/70">{CUPON.description}. Cargalo en el carrito antes de que termine el reloj.</p>
           </Reveal>
           <Reveal delay={300}>
             <div className="mt-6 flex justify-center">
@@ -193,7 +196,7 @@ export function Home() {
           </Reveal>
           <Reveal delay={400}>
             <Link
-              to="/productos?tag=oferta"
+              to="/productos"
               className="mt-7 inline-flex items-center gap-2 rounded-full bg-larel px-8 py-4 text-sm font-semibold text-ink transition hover:brightness-110 active:scale-95"
             >
               Quiero mi descuento <ArrowRight size={16} />
@@ -204,9 +207,9 @@ export function Home() {
 
       {/* ofertas rail */}
       <Reveal as="section" className="mx-auto mt-12 max-w-6xl md:px-4">
-        <SectionHeader title="Outlet Larel" subtitle="Precios que no se repiten" to="/productos?tag=oferta" />
+        <SectionHeader title="Últimas unidades" subtitle="Poco stock — se van rápido" to="/productos" />
         <Skeleton name="home-ofertas" loading={loading}>
-          <ProductRail products={ofertas} />
+          <ProductRail products={pocoStock} />
         </Skeleton>
       </Reveal>
 

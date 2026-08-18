@@ -210,7 +210,7 @@ export function Checkout() {
                 return (
                   <li key={`${i.productId}-${i.size}`} className="flex items-center gap-3">
                     <div className="relative">
-                      <Img src={p.images[0]} alt={p.name} className="size-14 rounded-xl object-cover" />
+                      <Img src={p.images[0]} alt={p.name} className="size-14 rounded-xl bg-white object-contain" />
                       <span className="absolute -right-1.5 -top-1.5 grid size-5 place-items-center rounded-full bg-ink text-[10px] font-bold text-white">
                         {i.qty}
                       </span>

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { SlidersHorizontal, X, ChevronDown, Grid2x2, Grid3x3, LayoutGrid } from 'lucide-react'
-import { products, categories, brands, type Category } from '../data/products'
+import { products, categories, brands, subcategories, type Category } from '../data/products'
 import { useFakeLoad } from '../lib/useFakeLoad'
 import { ProductCard } from '../components/ProductCard'
 
@@ -20,18 +20,12 @@ const PRICE_RANGES = [
   { key: 'r4', label: 'Más de Gs. 800.000', min: 800000, max: Infinity },
 ]
 
-const TYPES = [
-  { key: 'calzado', label: 'Calzados' },
-  { key: 'prenda', label: 'Prendas' },
-  { key: 'accesorio', label: 'Accesorios' },
-] as const
-
-const CLOTH_ORDER = ['S', 'M', 'L', 'XL', 'XXL']
+const CLOTH_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
 
 /** All sizes in the catalog, grouped: calzado (numeric), prendas (letters), otros. */
 const SIZE_GROUPS = (() => {
   const all = [...new Set(products.flatMap((p) => p.sizes))].filter((s) => s !== 'Único')
-  const numeric = all.filter((s) => /^\d+$/.test(s)).sort((a, b) => Number(a) - Number(b))
+  const numeric = all.filter((s) => /^\d+(\.\d+)?$/.test(s)).sort((a, b) => Number(a) - Number(b))
   const cloth = all.filter((s) => CLOTH_ORDER.includes(s)).sort((a, b) => CLOTH_ORDER.indexOf(a) - CLOTH_ORDER.indexOf(b))
   const other = all.filter((s) => !numeric.includes(s) && !cloth.includes(s)).sort()
   return [
@@ -104,39 +98,36 @@ export function Plp() {
   const [params, setParams] = useSearchParams()
   const category = categories.find((c) => c.slug === (cat ?? 'todos')) ?? categories[0]
 
-  const tag = params.get('tag')
   const marcaParam = params.get('marca')
   const isDesktop = useIsDesktop()
 
   const [selBrands, setSelBrands] = useState<string[]>(marcaParam ? [marcaParam] : [])
-  const [selTypes, setSelTypes] = useState<string[]>([])
+  const [selSubs, setSelSubs] = useState<string[]>([])
   const [selSizes, setSelSizes] = useState<string[]>([])
   const [priceKey, setPriceKey] = useState('all')
   const [sort, setSort] = useState<(typeof SORTS)[number]['key']>('relevancia')
   const [sheetOpen, setSheetOpen] = useState(false)
   const [density, setDensity] = useState<(typeof DENSITY)[number]['key']>('normal')
 
-  const loading = useFakeLoad(650, `${cat}-${tag}-${marcaParam}`)
+  const loading = useFakeLoad(650, `${cat}-${marcaParam}`)
 
   const filtered = useMemo(() => {
     const range = PRICE_RANGES.find((r) => r.key === priceKey)!
     let list = products.filter((p) => {
       if (category.slug !== 'todos' && p.category !== (category.slug as Category)) return false
-      if (tag === 'oferta' && !p.compareAt) return false
-      if (tag === 'new' && !p.tags.includes('new')) return false
       if (selBrands.length && !selBrands.includes(p.brand)) return false
-      if (selTypes.length && !selTypes.includes(p.type)) return false
+      if (selSubs.length && !selSubs.includes(p.subcategory)) return false
       if (selSizes.length && !p.sizes.some((s) => selSizes.includes(s))) return false
       if (p.price < range.min || p.price >= range.max) return false
       return true
     })
     if (sort === 'precio-asc') list = [...list].sort((a, b) => a.price - b.price)
     if (sort === 'precio-desc') list = [...list].sort((a, b) => b.price - a.price)
-    if (sort === 'nuevo') list = [...list].sort((a, b) => Number(b.tags.includes('new')) - Number(a.tags.includes('new')))
+    if (sort === 'nuevo') list = [...list].sort((a, b) => b.code - a.code)
     return list
-  }, [category.slug, tag, selBrands, selTypes, selSizes, priceKey, sort])
+  }, [category.slug, selBrands, selSubs, selSizes, priceKey, sort])
 
-  const activeFilters = selBrands.length + selTypes.length + selSizes.length + (priceKey !== 'all' ? 1 : 0)
+  const activeFilters = selBrands.length + selSubs.length + selSizes.length + (priceKey !== 'all' ? 1 : 0)
   const cols = DENSITY.find((d) => d.key === density)![isDesktop ? 'desktop' : 'mobile']
 
   const toggleIn = (arr: string[], v: string, set: (x: string[]) => void) =>
@@ -144,13 +135,12 @@ export function Plp() {
 
   const clearFilters = () => {
     setSelBrands([])
-    setSelTypes([])
+    setSelSubs([])
     setSelSizes([])
     setPriceKey('all')
     if (marcaParam) setParams({}, { replace: true })
   }
 
-  const isOutlet = tag === 'oferta'
 
   const chip = (active: boolean) =>
     `rounded-full border px-4 py-2 text-sm font-medium transition ${
@@ -159,11 +149,11 @@ export function Plp() {
 
   const Filters = () => (
     <div>
-      <FilterGroup title="Tipo de producto" count={selTypes.length}>
+      <FilterGroup title="Tipo de producto" count={selSubs.length}>
         <div className="flex flex-wrap gap-2">
-          {TYPES.map((t) => (
-            <button key={t.key} onClick={() => toggleIn(selTypes, t.key, setSelTypes)} className={chip(selTypes.includes(t.key))}>
-              {t.label}
+          {subcategories.map((s) => (
+            <button key={s} onClick={() => toggleIn(selSubs, s, setSelSubs)} className={chip(selSubs.includes(s))}>
+              {s}
             </button>
           ))}
         </div>
@@ -234,12 +224,8 @@ export function Plp() {
         <img src={category.cover} alt={category.label} className="h-full w-full object-cover opacity-70" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 to-black/25" />
         <div className="absolute inset-x-0 bottom-0 mx-auto max-w-6xl px-4 pb-5">
-          <p className="text-[11px] font-semibold text-larel">
-            {isOutlet ? 'Hasta 70% OFF · todas las marcas' : category.tagline}
-          </p>
-          <h1 className="headline-xl text-3xl text-white md:text-5xl">
-            {isOutlet ? 'Mega Outlet' : tag === 'new' ? 'Nuevo' : category.label}
-          </h1>
+          <p className="text-[11px] font-semibold text-larel">{category.tagline}</p>
+          <h1 className="headline-xl text-3xl text-white md:text-5xl">{category.label}</h1>
         </div>
       </section>
 
