@@ -126,7 +126,7 @@ export function Pdp() {
           {/* gallery */}
           <div>
             <div className="relative">
-              <div className="no-scrollbar flex snap-x snap-mandatory overflow-x-auto overflow-y-hidden rounded-2xl [touch-action:pan-x] md:hidden">
+              <div className="no-scrollbar flex snap-x snap-mandatory overflow-x-auto overflow-y-hidden rounded-2xl [touch-action:pan-x_pan-y] md:hidden">
                 {product.images.map((src, i) => (
                   <Img key={i} src={src} alt={product.name} className="aspect-square w-full shrink-0 snap-center bg-white object-contain" />
                 ))}
@@ -142,12 +142,12 @@ export function Pdp() {
               >
                 <Heart size={19} className={inWishlist ? 'fill-red-500 stroke-red-500' : ''} />
               </button>
-              {product.stock <= 2 && (
+              {(product.compareAt || product.stock <= 2) && (
                 <span
                   data-no-skeleton
                   className="absolute left-3 top-3 rounded-full bg-larel px-3 py-1 text-xs font-bold text-ink"
                 >
-                  Últimas unidades
+                  {product.compareAt ? 'Oferta' : 'Últimas unidades'}
                 </span>
               )}
             </div>
@@ -174,7 +174,7 @@ export function Pdp() {
               <span>· SKU {product.sku}</span>
             </div>
             <div className="mt-3">
-              <Price price={product.price} size="lg" />
+              <Price price={product.price} compareAt={product.compareAt} size="lg" />
               <p className="mt-0.5 text-xs text-zinc-500">Hasta 6 cuotas sin interés con tarjetas asociadas</p>
             </div>
 

@@ -20,7 +20,7 @@ export function SideCart() {
 
   const t = totals(items, coupon)
   const missingForFree = FREE_SHIPPING_MIN - (t.subtotal - t.discount)
-  const recos = products.filter((p) => !items.some((i) => i.productId === p.id) && p.category === 'accesorios').slice(0, 3)
+  const recos = products.filter((p) => !items.some((i) => i.productId === p.id) && p.compareAt).slice(0, 3)
 
   const submitCoupon = () => {
     if (!code.trim()) return

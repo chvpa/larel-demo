@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
-import { SlidersHorizontal, X, ChevronDown, Grid2x2, Grid3x3, LayoutGrid } from 'lucide-react'
+import { SlidersHorizontal, X, ChevronDown, ChevronLeft, ChevronRight, Grid2x2, Grid3x3, LayoutGrid } from 'lucide-react'
 import { products, categories, brands, subcategories, type Category } from '../data/products'
 import { useFakeLoad } from '../lib/useFakeLoad'
 import { ProductCard } from '../components/ProductCard'
@@ -19,6 +19,8 @@ const PRICE_RANGES = [
   { key: 'r3', label: 'Gs. 500.000 – 800.000', min: 500000, max: 800000 },
   { key: 'r4', label: 'Más de Gs. 800.000', min: 800000, max: Infinity },
 ]
+
+const PER_PAGE = 24
 
 const CLOTH_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
 
@@ -98,6 +100,7 @@ export function Plp() {
   const [params, setParams] = useSearchParams()
   const category = categories.find((c) => c.slug === (cat ?? 'todos')) ?? categories[0]
 
+  const tag = params.get('tag')
   const marcaParam = params.get('marca')
   const isDesktop = useIsDesktop()
 
@@ -107,14 +110,17 @@ export function Plp() {
   const [priceKey, setPriceKey] = useState('all')
   const [sort, setSort] = useState<(typeof SORTS)[number]['key']>('relevancia')
   const [sheetOpen, setSheetOpen] = useState(false)
+  const gridRef = useRef<HTMLDivElement>(null)
   const [density, setDensity] = useState<(typeof DENSITY)[number]['key']>('normal')
+  const [page, setPage] = useState(1)
 
-  const loading = useFakeLoad(650, `${cat}-${marcaParam}`)
+  const loading = useFakeLoad(650, `${cat}-${tag}-${marcaParam}`)
 
   const filtered = useMemo(() => {
     const range = PRICE_RANGES.find((r) => r.key === priceKey)!
     let list = products.filter((p) => {
       if (category.slug !== 'todos' && p.category !== (category.slug as Category)) return false
+      if (tag === 'oferta' && !p.compareAt) return false
       if (selBrands.length && !selBrands.includes(p.brand)) return false
       if (selSubs.length && !selSubs.includes(p.subcategory)) return false
       if (selSizes.length && !p.sizes.some((s) => selSizes.includes(s))) return false
@@ -123,9 +129,21 @@ export function Plp() {
     })
     if (sort === 'precio-asc') list = [...list].sort((a, b) => a.price - b.price)
     if (sort === 'precio-desc') list = [...list].sort((a, b) => b.price - a.price)
-    if (sort === 'nuevo') list = [...list].sort((a, b) => b.code - a.code)
+    if (sort === 'nuevo') list = [...list].sort((a, b) => b.addedAt.localeCompare(a.addedAt) || b.code - a.code)
     return list
-  }, [category.slug, selBrands, selSubs, selSizes, priceKey, sort])
+  }, [category.slug, tag, selBrands, selSubs, selSizes, priceKey, sort])
+
+  const pages = Math.max(1, Math.ceil(filtered.length / PER_PAGE))
+  const current = Math.min(page, pages)
+  const visible = filtered.slice((current - 1) * PER_PAGE, current * PER_PAGE)
+
+  // cualquier cambio de filtro, orden o categoría vuelve a la primera página
+  useEffect(() => setPage(1), [category.slug, tag, selBrands, selSubs, selSizes, priceKey, sort])
+
+  const goTo = (n: number) => {
+    setPage(n)
+    gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
   const activeFilters = selBrands.length + selSubs.length + selSizes.length + (priceKey !== 'all' ? 1 : 0)
   const cols = DENSITY.find((d) => d.key === density)![isDesktop ? 'desktop' : 'mobile']
@@ -224,8 +242,12 @@ export function Plp() {
         <img src={category.cover} alt={category.label} className="h-full w-full object-cover opacity-70" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 to-black/25" />
         <div className="absolute inset-x-0 bottom-0 mx-auto max-w-6xl px-4 pb-5">
-          <p className="text-[11px] font-semibold text-larel">{category.tagline}</p>
-          <h1 className="headline-xl text-3xl text-white md:text-5xl">{category.label}</h1>
+          <p className="text-[11px] font-semibold text-larel">
+            {tag === 'oferta' ? 'Descuentos en todas las marcas' : category.tagline}
+          </p>
+          <h1 className="headline-xl text-3xl text-white md:text-5xl">
+            {tag === 'oferta' ? 'Ofertas' : category.label}
+          </h1>
         </div>
       </section>
 
@@ -287,7 +309,7 @@ export function Plp() {
             <Filters />
           </aside>
 
-          <div className="min-w-0 flex-1">
+          <div ref={gridRef} className="min-w-0 flex-1 scroll-mt-24">
             {filtered.length === 0 && !loading ? (
               <div className="py-16 text-center">
                 <p className="font-bold">No hay productos con estos filtros</p>
@@ -301,9 +323,42 @@ export function Plp() {
                 style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
               >
                 {loading
-                  ? Array.from({ length: filtered.length || cols * 2 }, (_, i) => <CardBones key={i} />)
-                  : filtered.map((p) => <ProductCard key={p.id} product={p} />)}
+                  ? Array.from({ length: Math.min(visible.length, PER_PAGE) || cols * 2 }, (_, i) => <CardBones key={i} />)
+                  : visible.map((p) => <ProductCard key={p.id} product={p} />)}
               </div>
+            )}
+
+            {pages > 1 && !loading && (
+              <nav aria-label="Paginación" className="mt-10 flex items-center justify-center gap-1.5">
+                <button
+                  aria-label="Página anterior"
+                  disabled={current === 1}
+                  onClick={() => goTo(current - 1)}
+                  className="grid size-10 place-items-center rounded-full border border-zinc-200 transition hover:border-ink disabled:pointer-events-none disabled:opacity-30"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                {Array.from({ length: pages }, (_, i) => i + 1).map((n) => (
+                  <button
+                    key={n}
+                    aria-current={n === current ? 'page' : undefined}
+                    onClick={() => goTo(n)}
+                    className={`size-10 rounded-full text-sm font-semibold transition ${
+                      n === current ? 'bg-ink text-white' : 'border border-zinc-200 hover:border-ink'
+                    }`}
+                  >
+                    {n}
+                  </button>
+                ))}
+                <button
+                  aria-label="Página siguiente"
+                  disabled={current === pages}
+                  onClick={() => goTo(current + 1)}
+                  className="grid size-10 place-items-center rounded-full border border-zinc-200 transition hover:border-ink disabled:pointer-events-none disabled:opacity-30"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </nav>
             )}
           </div>
         </div>

@@ -24,6 +24,21 @@ const CAT = {
   'Natación': 'accesorios',
   'Hidratación y accesorios': 'accesorios',
   'Pelotas y redes': 'accesorios',
+  'Cabeza y cuello': 'accesorios',
+}
+
+// Descuentos de demo: el stock no trae precio anterior, pero la tienda tiene que
+// poder mostrar la funcionalidad. Sembrado con el SKU para que regenerar no cambie nada.
+const rnd = (seed, salt) => {
+  let x = 2166136261
+  for (const ch of seed + salt) x = Math.imul(x ^ ch.charCodeAt(0), 16777619) >>> 0
+  return x / 4294967296
+}
+const OFF = [10, 15, 20, 25, 30, 40]
+const descuento = (sku, price) => {
+  if (rnd(sku, 'oferta') >= 0.35) return undefined
+  const off = OFF[Math.floor(rnd(sku, 'monto') * OFF.length)]
+  return Math.round(price / (1 - off / 100) / 1000) * 1000
 }
 
 // el CSV trae "Ba?o" por un problema de codificación en origen
@@ -31,7 +46,9 @@ const titleCase = (s) =>
   s.replace(/\?/g, 'ñ').toLowerCase().replace(/(^|[\s/.])(\p{L})/gu, (_, a, b) => a + b.toUpperCase())
 
 const CLOTH = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
-const size = (t) => (t === '1' || t.toUpperCase() === 'UNICO' ? 'Único' : t.toUpperCase())
+// el CSV pierde el punto decimal en algunos talles de calzado: 105 → 10.5 (convive con 8.5 / 9.5)
+const size = (t) =>
+  t === '1' || t.toUpperCase() === 'UNICO' ? 'Único' : /^1[0-3]5$/.test(t) ? t[0] + t[1] + '.5' : t.toUpperCase()
 const sortSizes = (a, b) => {
   const na = Number(a), nb = Number(b)
   if (!isNaN(na) && !isNaN(nb)) return na - nb
@@ -62,6 +79,8 @@ const products = [...bySku.values()].map((rs) => {
     subcategory: r.categoria,
     gender: r.genero ? titleCase(r.genero) : undefined,
     price: Number(r.precio),
+    compareAt: descuento(r.sku, Number(r.precio)),
+    addedAt: r.cargado,
     images: [r.imagen_1, r.imagen_2].filter(Boolean).map((f) => '/productos/' + f),
     sizes,
     colors: r.color ? [titleCase(r.color)] : [],
@@ -80,7 +99,9 @@ const lit = (v) => JSON.stringify(v)
 const line = (p) =>
   `  { id: ${lit(p.id)}, sku: ${lit(p.sku)}, code: ${p.code}, name: ${lit(p.name)}, brand: ${lit(p.brand)}, category: ${lit(p.category)}, subcategory: ${lit(p.subcategory)}, ` +
   (p.gender ? `gender: ${lit(p.gender)}, ` : '') +
-  `price: ${p.price}, images: ${lit(p.images)}, sizes: ${lit(p.sizes)}, colors: ${lit(p.colors)}, stock: ${p.stock}, description: ${lit(p.description)} },`
+  `price: ${p.price}, ` +
+  (p.compareAt ? `compareAt: ${p.compareAt}, ` : '') +
+  `addedAt: ${lit(p.addedAt)}, images: ${lit(p.images)}, sizes: ${lit(p.sizes)}, colors: ${lit(p.colors)}, stock: ${p.stock}, description: ${lit(p.description)} },`
 
 const out = ['calzados', 'prendas', 'accesorios']
   .map((c) => `  // ── ${c.toUpperCase()} ${'─'.repeat(50 - c.length)}\n` + products.filter((p) => p.category === c).map(line).join('\n'))
@@ -107,4 +128,5 @@ for (const p of products) {
 
 console.log(`ok — ${products.length} productos, ${recs.length} filas de stock`)
 console.log('marcas:', [...new Set(products.map((p) => p.brand))].length, '· subcategorías:', [...new Set(products.map((p) => p.subcategory))].length)
+console.log('con descuento:', products.filter((p) => p.compareAt).length, 'de', products.length)
 console.log('precio:', Math.min(...products.map((p) => p.price)), '-', Math.max(...products.map((p) => p.price)))

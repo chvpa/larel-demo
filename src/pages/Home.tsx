@@ -2,7 +2,7 @@ import { useEffect, useState, type CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { Skeleton } from 'boneyard-js/react'
-import { categories, heroSlides, collections, latest, lowStock, IMG } from '../data/products'
+import { categories, heroSlides, collections, latest, onSale, IMG } from '../data/products'
 import { seedCoupons } from '../data/coupons'
 import { useFakeLoad } from '../lib/useFakeLoad'
 import { ProductCard } from '../components/ProductCard'
@@ -105,7 +105,7 @@ function Ticker() {
 export function Home() {
   const loading = useFakeLoad(750)
   const nuevo = latest(8)
-  const pocoStock = lowStock(8)
+  const ofertas = onSale(8)
 
   return (
     <div>
@@ -115,7 +115,7 @@ export function Home() {
       {/* categories — horizontal rail, never scrolls vertically */}
       <Reveal as="section" className="mx-auto mt-10 max-w-6xl md:px-4">
         <SectionHeader title="Elegí tu cancha" subtitle="Comprá por categoría" to="/productos" />
-        <div className="no-scrollbar flex gap-3 overflow-x-auto overflow-y-hidden overscroll-x-contain px-4 [touch-action:pan-x] md:grid md:grid-cols-3 md:overflow-visible md:px-0 md:[touch-action:auto]">
+        <div className="no-scrollbar flex gap-3 overflow-x-auto overflow-y-hidden overscroll-x-contain px-4 [touch-action:pan-x_pan-y] md:grid md:grid-cols-3 md:overflow-visible md:px-0 md:[touch-action:auto]">
           {categories
             .filter((c) => c.slug !== 'todos')
             .map((c) => (
@@ -148,7 +148,7 @@ export function Home() {
       {/* collections — bento on desktop, slider on mobile */}
       <Reveal as="section" className="mx-auto mt-14 max-w-6xl md:px-4">
         <SectionHeader title="Colecciones" subtitle="Armadas para vos" />
-        <div className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto overflow-y-hidden overscroll-x-contain px-4 [touch-action:pan-x] md:grid md:auto-rows-[168px] md:grid-cols-4 md:overflow-visible md:px-0 md:[touch-action:auto]">
+        <div className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto overflow-y-hidden overscroll-x-contain px-4 [touch-action:pan-x_pan-y] md:grid md:auto-rows-[168px] md:grid-cols-4 md:overflow-visible md:px-0 md:[touch-action:auto]">
           {collections.map((c, i) => (
             <Link
               key={c.id}
@@ -196,7 +196,7 @@ export function Home() {
           </Reveal>
           <Reveal delay={400}>
             <Link
-              to="/productos"
+              to="/productos?tag=oferta"
               className="mt-7 inline-flex items-center gap-2 rounded-full bg-larel px-8 py-4 text-sm font-semibold text-ink transition hover:brightness-110 active:scale-95"
             >
               Quiero mi descuento <ArrowRight size={16} />
@@ -207,9 +207,9 @@ export function Home() {
 
       {/* ofertas rail */}
       <Reveal as="section" className="mx-auto mt-12 max-w-6xl md:px-4">
-        <SectionHeader title="Últimas unidades" subtitle="Poco stock — se van rápido" to="/productos" />
+        <SectionHeader title="Ofertas" subtitle="Precios que no se repiten" to="/productos?tag=oferta" />
         <Skeleton name="home-ofertas" loading={loading}>
-          <ProductRail products={pocoStock} />
+          <ProductRail products={ofertas} />
         </Skeleton>
       </Reveal>
 

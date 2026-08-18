@@ -23,7 +23,7 @@ export function BrandsRail() {
 
       <div
         ref={ref}
-        className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto overflow-y-hidden overscroll-x-contain px-4 [touch-action:pan-x] md:px-0"
+        className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto overflow-y-hidden overscroll-x-contain px-4 [touch-action:pan-x_pan-y] md:px-0"
       >
         {brandCards.map((b) => (
           <Link

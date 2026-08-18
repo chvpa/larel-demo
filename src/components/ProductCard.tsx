@@ -8,6 +8,7 @@ import { useUi } from '../store/ui'
 import { colorSwatch } from '../lib/colors'
 import { Img } from './Img'
 import { Price } from './Price'
+import { pct } from '../lib/format'
 
 export function ProductCard({ product }: { product: Product }) {
   const inWishlist = useWishlist((s) => s.ids.includes(product.id))
@@ -42,8 +43,13 @@ export function ProductCard({ product }: { product: Product }) {
           className="aspect-[4/5] w-full bg-white object-contain transition-transform duration-300 group-hover:scale-105"
         />
         <div className="absolute left-2 top-2 flex flex-col items-start gap-1">
+          {product.compareAt && (
+            <span className="rounded-full bg-larel px-2 py-0.5 text-[11px] font-bold text-ink">
+              -{pct(product.price, product.compareAt)}%
+            </span>
+          )}
           {lastUnits && (
-            <span className="rounded-full bg-larel px-2 py-0.5 text-[11px] font-bold text-ink">Últimas unidades</span>
+            <span className="rounded-full bg-ink px-2 py-0.5 text-[11px] font-bold text-larel">Últimas unidades</span>
           )}
         </div>
         <button
@@ -64,7 +70,7 @@ export function ProductCard({ product }: { product: Product }) {
           {product.name}
         </Link>
         <div className="mt-0.5">
-          <Price price={product.price} size="sm" />
+          <Price price={product.price} compareAt={product.compareAt} size="sm" />
         </div>
 
         {/* colors */}
