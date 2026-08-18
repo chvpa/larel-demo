@@ -81,7 +81,7 @@ export function Promos() {
       {editing && (
         <div className="fixed inset-0 z-50">
           <div className="anim-fade-in absolute inset-0 bg-black/50" onClick={() => setEditing(null)} />
-          <div className="anim-slide-up absolute inset-x-0 bottom-0 mx-auto max-h-[85dvh] max-w-lg overflow-y-auto rounded-t-3xl bg-white p-5 pb-safe md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:rounded-3xl">
+          <div className="anim-slide-up absolute inset-x-0 bottom-0 mx-auto max-h-[85dvh] max-w-lg overflow-y-auto rounded-t-3xl bg-white p-5 pb-safe-4 md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:rounded-3xl">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="headline text-lg">{isNew ? 'Nuevo cupón' : `Editar ${editing.code}`}</h2>
               <button aria-label="Cerrar" onClick={() => setEditing(null)} className="grid size-10 place-items-center rounded-full bg-zinc-100">

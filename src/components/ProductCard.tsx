@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Heart, Check } from 'lucide-react'
 import type { Product } from '../data/products'
@@ -19,6 +19,7 @@ export function ProductCard({ product }: { product: Product }) {
   const [color, setColor] = useState(0)
   const [size, setSize] = useState<string | null>(null)
   const [askSize, setAskSize] = useState(false)
+  const sizesRef = useRef<HTMLDivElement>(null)
 
   const lastUnits = product.stock <= 2
   const oneSize = product.sizes.length === 1
@@ -26,7 +27,9 @@ export function ProductCard({ product }: { product: Product }) {
   const addToCart = () => {
     const chosen = size ?? (oneSize ? product.sizes[0] : null)
     if (!chosen) {
+      // la card puede estar a medio ver en la grilla: mostrá los talles antes de pedirlos
       setAskSize(true)
+      sizesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
       return
     }
     add(product.id, chosen)
@@ -93,7 +96,7 @@ export function ProductCard({ product }: { product: Product }) {
 
         {/* sizes — every variant is shown, wrapping to as many rows as needed */}
         {!oneSize && (
-          <div className="mt-2 mb-2 flex flex-wrap gap-1.5">
+          <div ref={sizesRef} className="mt-2 mb-2 flex flex-wrap gap-1.5 scroll-mt-24">
             {product.sizes.map((s) => (
               <button
                 key={s}

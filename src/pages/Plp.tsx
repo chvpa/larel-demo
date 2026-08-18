@@ -368,7 +368,7 @@ export function Plp() {
       {sheetOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="anim-fade-in absolute inset-0 bg-black/50" onClick={() => setSheetOpen(false)} />
-          <div className="anim-slide-up absolute inset-x-0 bottom-0 max-h-[85dvh] overflow-y-auto rounded-t-3xl bg-white p-5 pb-safe">
+          <div className="anim-slide-up absolute inset-x-0 bottom-0 max-h-[85dvh] overflow-y-auto rounded-t-3xl bg-white p-5 pb-safe-4">
             <div className="mb-2 flex items-center justify-between">
               <h2 className="headline text-lg">Filtros</h2>
               <button

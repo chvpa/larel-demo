@@ -160,7 +160,7 @@ export function SideCart() {
               </ul>
             </div>
 
-            <div className="border-t border-zinc-100 px-4 py-3 pb-safe">
+            <div className="border-t border-zinc-100 px-4 py-3 pb-safe-4">
               {coupon ? (
                 <div className="mb-2 flex items-center justify-between rounded-xl bg-larel/15 px-3 py-2">
                   <p className="flex items-center gap-2 text-sm font-semibold text-larel-dark">

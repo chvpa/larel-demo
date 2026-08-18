@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useParams, Link, Navigate } from 'react-router-dom'
 import { Heart, Truck, RefreshCcw, ShieldCheck, ChevronDown, ShoppingBag } from 'lucide-react'
 import { Skeleton } from 'boneyard-js/react'
@@ -88,6 +88,7 @@ export function Pdp() {
   const [size, setSize] = useState<string | null>(null)
   const [color, setColor] = useState(0)
   const [sizeError, setSizeError] = useState(false)
+  const sizesRef = useRef<HTMLDivElement>(null)
   const add = useCart((s) => s.add)
   const setCartOpen = useUi((s) => s.setCartOpen)
   const inWishlist = useWishlist((s) => (product ? s.ids.includes(product.id) : false))
@@ -100,7 +101,9 @@ export function Pdp() {
 
   const addToCart = () => {
     if (!size) {
+      // el botón puede dispararse desde la barra fija: llevá al usuario al talle
       setSizeError(true)
+      sizesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       return
     }
     add(product.id, size)
@@ -212,12 +215,16 @@ export function Pdp() {
             </div>
 
             {/* sizes */}
-            <div className="mt-5">
+            <div ref={sizesRef} className="mt-5">
               <div className="mb-2 flex items-center justify-between">
                 <p className="text-sm font-semibold">Talle</p>
                 <button className="text-xs font-medium text-zinc-500 underline">Guía de talles</button>
               </div>
-              <div className="grid grid-cols-4 gap-2">
+              <div
+                className={`grid grid-cols-4 gap-2 rounded-2xl transition ${
+                  sizeError ? 'ring-2 ring-red-400 ring-offset-4' : ''
+                }`}
+              >
                 {product.sizes.map((s) => (
                   <button
                     key={s}

@@ -159,7 +159,7 @@ export function BundleBuilder() {
       {choosingProduct && (
         <div className="fixed inset-0 z-50">
           <div className="anim-fade-in absolute inset-0 bg-black/40 backdrop-blur-[2px]" onClick={() => setChoosing(null)} />
-          <div className="anim-slide-up absolute inset-x-0 bottom-0 mx-auto max-w-md rounded-t-3xl bg-white p-5 [padding-bottom:calc(env(safe-area-inset-bottom)+1.25rem)] md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:rounded-3xl">
+          <div className="anim-slide-up absolute inset-x-0 bottom-0 mx-auto max-w-md rounded-t-3xl bg-white p-5 pb-safe-4 md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:rounded-3xl">
             <div className="drawer-title mb-4 flex items-center gap-3">
               <Img
                 src={choosingProduct.images[0]}
